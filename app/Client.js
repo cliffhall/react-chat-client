@@ -83,6 +83,7 @@ export const PORTS = [3001, 3002, 3003, 3004];
 
 const createElement = React.createElement;
 
+// Socket manager
 export class Socket {
 
     constructor(onChange, onStatus, onMessage) {
