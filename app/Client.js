@@ -1,12 +1,17 @@
 // Styles
 export const clientStyle = {
-    display: 'inline-block',
+    display: 'block',
     border: '1px solid #ACACAC',
     borderRadius: '2px',
-    textAlign: 'right',
+    textAlign: 'left',
     backgroundColor: '#FCFCFC',
-    color: '#ffb3cb',
+    color: '#00000',
     fontFamily: "'Lato', 'PT Sans', Helvetica, sans-serif",
+};
+export const footerStyle = {
+    display: 'flex',
+    flexDirection: 'row',
+    borderTop: '1px solid #ACACAC'
 };
 export const buttonStyle = {
     backgroundColor: 'transparent',
@@ -17,6 +22,11 @@ export const buttonStyle = {
     padding: '5px',
     cursor: 'pointer',
 };
+export const disabledButtonStyle = Object.assign({}, buttonStyle, {
+    color: '#C3C3C3',
+    borderTop: '1px solid #C3C3C3',
+    cursor: 'not-allowed'
+});
 export const recipientStyle = {
     fontSize: '12px',
     lineHeight: '12px',
@@ -41,18 +51,23 @@ export const historyStyle = {
     'font-family': 'Arial, sans-serif',
 };
 export const statusStyle = {
-    marginTop: '10px',
-    borderTop: '1px solid #ACACAC',
     fontSize: '15px',
     lineHeight: '15px',
     padding: '5px 5px 0',
     color: 'green',
+    flexGrow: '2'
 };
 export const errorStatusStyle = {
     fontSize: '10px',
     lineHeight: '10px',
     padding: '5px 5px 0',
     color: 'red',
+};
+export const fieldStyle = {
+    margin: '10px'
+};
+export const labelStyle = {
+    marginRight: '10px'
 };
 
 // Message constants
@@ -65,7 +80,6 @@ export const RECONNECT_ERR = 'reconnect_error';
 
 // Defaults
 export const PORTS = [3001, 3002, 3003, 3004];
-export const USERS = ['Anna', 'Billy'];
 
 const createElement = React.createElement;
 
@@ -139,39 +153,99 @@ export class Socket {
     }
 }
 
-export class UserSelector extends React.Component {
-    constructor(props) {
+// Text input for user name
+export class UserInput extends React.Component {
+    constructor(props) { // connected, onChange
         super(props);
-        this.state = {selected: USERS[0]}
+        this.handleInputChange = this.handleInputChange.bind(this);
+    }
+
+    // Pass the value of the input field up to the client
+    handleInputChange(event) {
+        this.props.onChange(event.target.value);
     }
 
     render() {
-        return createElement('select', {
-                name: 'selectUser',
-                onChange: this.onChange
-            },
-            USERS.map( user => createElement('option', {
-                value: user
-            }))
+        return createElement('div',{style: fieldStyle},
+
+            // Label
+            createElement('label',{
+                style: labelStyle,
+                htmlFor: 'selectUser'
+            }, 'Your Name'),
+
+            // Text Input
+            createElement('input', {
+                name: 'userInput',
+                type: 'text',
+                onChange: this.handleInputChange,
+                disabled: this.props.connected
+            })
         );
     }
 }
 
+// Dropdown to select port number to connect to
 export class PortSelector extends React.Component {
-    constructor(props) { // onChange
+    constructor(props) { // // connected, onChange
         super(props);
-        this.state = {selected: PORTS[0]}
+        this.handleSelectChange = this.handleSelectChange.bind(this);
+    }
+
+    // Pass the value of the dropdown up to the client
+    handleSelectChange(event) {
+        this.props.onChange(event.target.value);
     }
 
     render() {
-        return createElement('select', {
-                name: 'selectPort',
-                onChange: this.onChange
-            },
-            PORTS.map( port => createElement('option', {
-                value: port
-            }))
-        );
+        return createElement('div',{style: fieldStyle},
+
+            // Label
+            createElement('label',{
+                style: labelStyle,
+                htmlFor: 'selectPort'
+            }, 'Select Port'),
+
+            // Dropdown
+            createElement('select', {
+                    name: 'selectPort',
+                    onChange: this.handleSelectChange,
+                    disabled: this.props.connected
+                },
+                PORTS.map( (port, index) => createElement('option', {
+                    value: port,
+                    key: index
+                }, port))
+            )
+        )
+    }
+}
+
+// Let user toggle the connection
+export class ConnectButton extends React.Component {
+    constructor(props) { // disabled, connected, handleClick
+        super(props);
+    }
+
+    render() {
+        return createElement('button', {
+            style: this.props.enabled ? buttonStyle : disabledButtonStyle,
+            onClick: this.props.handleClick,
+            disabled: !this.props.enabled
+        }, this.props.connected ? 'Disconnect' : 'Connect');
+    }
+}
+
+// Display the connection status
+export class StatusLine extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        return createElement('div',
+            {style: this.props.isError ? errorStatusStyle : statusStyle},
+            this.props.status);
     }
 }
 
@@ -205,33 +279,6 @@ export class MessageHistory extends React.Component {
     }
 }
 
-// Let user toggle the connection
-export class ConnectButton extends React.Component {
-    constructor(props) { // connected, handleClick
-        super(props);
-    }
-    render() {
-        return this.props.enabled ? createElement('button', {
-            style: buttonStyle,
-            onClick: this.props.handleClick,
-            disabled: !this.props.enabled
-        }, this.props.connected ? 'Disconnect' : 'Connect') : null;
-    }
-}
-
-// Display the connection status
-export class StatusLine extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
-    render() {
-        return createElement('div',
-            {style: this.props.isError ? errorStatusStyle : statusStyle},
-            this.props.status);
-    }
-}
-
 // Main client component
 export class Client extends React.Component {
     constructor(props) {
@@ -241,15 +288,17 @@ export class Client extends React.Component {
         this.onToggleConnection = this.onToggleConnection.bind(this);
         this.onIncomingMessage = this.onIncomingMessage.bind(this);
         this.onSendMessage = this.onSendMessage.bind(this);
+        this.onUserChange = this.onUserChange.bind(this);
+        this.onPortChange = this.onPortChange.bind(this);
         this.socket = new Socket( this.onConnectionChange, this.onStatusChange, this.onIncomingMessage );
         this.state = {
             connected: false,
-            status: 'Select a user and port, then click Connect.',
+            status: 'Select a user and port.',
             isError: false,
             messages: [],
-            user: 'Anna',
-            recipient: 'Billy',
-            port: '3001'
+            user: null,
+            recipient: null,
+            port: PORTS[0]
         };
     }
 
@@ -297,25 +346,48 @@ export class Client extends React.Component {
         });
     }
 
+    // A user has been selected
+    onUserChange(user) {
+        this.setState({user: user});
+    }
+
+    // A port has been selected
+    onPortChange(port) {
+        this.setState({port: port});
+    }
+
     // Render the component
     render() {
         return createElement('div', {style: clientStyle},
 
-
-
-
-            // Connect button
-            createElement(ConnectButton, {
-                enabled: (this.state.port && this.state.user),
+            // User selector
+            createElement(UserInput, {
                 connected: this.state.connected,
-                handleClick: this.onToggleConnection
+                onChange: this.onUserChange
             }),
 
-            // Status Line
-            createElement(StatusLine, {
-                status: this.state.status,
-                isError: this.state.isError
-            })
+            // Port selector
+            createElement(PortSelector, {
+                connected: this.state.connected,
+                onChange: this.onPortChange
+            }),
+
+            // Footer (status line / connection toggle)
+            createElement('div', {style: footerStyle},
+
+                // Status Line
+                createElement(StatusLine, {
+                    status: this.state.status,
+                    isError: this.state.isError
+                }),
+
+                // Connect button
+                createElement(ConnectButton, {
+                    enabled: (this.state.port && this.state.user),
+                    connected: this.state.connected,
+                    handleClick: this.onToggleConnection
+                })
+            )
         )
     }
 }
