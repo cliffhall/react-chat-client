@@ -1,21 +1,16 @@
-import { ClientDisplay, Timer } from './Client.js'
+import { Client, Socket } from './Client.js'
 
-const socket = new Socket()
+
+
+//const onChange = () => socket.setState({'connected: true'});
+//const socket = new Socket();
 
 function render() {
     ReactDOM.render(
         React.createElement('div', {},
-            React.createElement(TimerDisplay, {
-                title: 'POMODORO',
-                // These 5 lines connect the Socket with the ChatDisplay
-                time: Math.max((60*25 - timer.time)/60, 0),
-                active: timer.active,
-                onStart: () => timer.start(),
-                onStop: () => timer.stop(),
-                onReset: () => timer.reset()
-            })
+            React.createElement(Client, {})
         ),
         document.getElementById('app')
     )
 }
-render()
+render();

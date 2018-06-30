@@ -64,72 +64,77 @@ export const RECONNECT_ERR = 'reconnect_error';
 export const PORTS = [3001, 3002, 3003, 3004];
 export const USERS = ['Anna', 'Billy'];
 
-export class Socket extends React.Component {
+export function Socket (onChange, onStatus, onMessage) {
+    let recipient = null;
+    let socket = null;
+    let user = null;
+    let port = null;
 
-    constructor(port, user, onChange, onStatus, onMessage) {
-        this.user = user;
-        this.recipient = USERS.find(u => u !== this.user);
-        this.port = port;
-        this.onChange = onChange; // (isConnected)
-        this.onStatus = onStatus; // (status, isError=false)
-        this.onMessage = onMessage; // (message)
-        this.connect = this.connect.bind(this);
-        this.sendIdent = this.sendIdent.bind(this);
-        this.sendIm = this.sendIm.bind(this);
-        this.disconnect = this.disconnect.bind(this);
+    function setUser(selected) {
+        user = selected;
+        recipient = USERS.find(u => u !== user);
+    }
+
+    // Set the port
+    function setPort(selected) {
+        port = selected;
+    }
+
+    function isReady() {
+        return port && user;
     }
 
     // User clicked connect button
-    connect() {
-
-        // Received connect event from socket
-        let onConnected = () => {
-            this.sendIdent(this.user);
-            this.socket.on(IM, this.onMessage);
-            this.onChange(true);
-        };
-
-        // Received disconnect event from socket
-        let onDisconnected = () => {
-            this.onChange(true);
-        };
-
-        // Received error from socket
-        let onError = message => {
-            this.onStatus(message, true);
-            this.socket.close();
-        };
+    function connect() {
 
         // Connect
-        let host = `http://localhost:${this.port}`;
-        this.socket = io.connect(host);
+        let host = `http://localhost:${port}`;
+        socket = io.connect(host);
 
         // Set listeners
-        this.socket.on(CONNECT, onConnected);
-        this.socket.on(DISCONNECT, onDisconnected);
-        this.socket.on(CONNECT_ERR, onError);
-        this.socket.on(RECONNECT_ERR, onError);
+        socket.on(CONNECT, onConnected);
+        socket.on(DISCONNECT, onDisconnected);
+        socket.on(CONNECT_ERR, onError);
+        socket.on(RECONNECT_ERR, onError);
+
+        // Received connect event from socket
+        function onConnected() {
+            sendIdent(user);
+            socket.on(IM, onMessage);
+            onChange(true);
+        }
+
+        // Received disconnect event from socket
+        function onDisconnected() {
+            onChange(false);
+        }
+
+        // Received error from socket
+        function onError(message) {
+            onStatus(message, true);
+            socket.close();
+        }
 
     }
 
     // Send an identification message to the server
-    sendIdent() {
-        this.socket.emit(IDENT, this.user);
+    function sendIdent() {
+        socket.emit(IDENT, user);
     }
 
     // Send a message over the socket
-    sendIm(message) {
-        this.socket.emit(IM, {
-            'from': this.user,
-            'to': this.recipient,
+    function sendIm(message) {
+        socket.emit(IM, {
+            'from': user,
+            'to': recipient,
             'text': message,
             'forwarded': false
         });
     }
 
     // Close the socket
-    disconnect() {
-        this.socket.close();
+    function disconnect() {
+        socket.close();
     }
 }
 
@@ -211,23 +216,16 @@ export class ConnectButton extends React.Component {
     }
 }
 
+// WORKING!
 export class StatusLine extends React.Component {
-    constructor() {
-        this.state = {
-            status: 'Select a user and port then click Connect',
-            isError: false
-        };
-        this.setStatus = this.setStatus.bind(this);
-    }
-
-    setStatus(status, isError=false) {
-        this.setState({status: status, isError: isError})
+    constructor(props) {
+        super(props);
     }
 
     render() {
-        return React.createElement('div', {
-            style: this.state.isError ? errorStatusStyle : statusStyle},
-            this.state.status);
+        return React.createElement('div',
+            {style: this.props.isError ? errorStatusStyle : statusStyle},
+            this.props.status);
     }
 }
 
@@ -235,14 +233,14 @@ export class Client extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            connected: false,
-            user: null,
-            port: null
+            connected: false
         }
     }
 
     render() {
-
+        return React.createElement(StatusLine,
+            {status: 'Select a user and port, then click Connect.',
+             isError: false});
     }
 }
 
