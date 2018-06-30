@@ -7,7 +7,7 @@ export const clientStyle = {
     backgroundColor: '#FCFCFC',
     color: '#ffb3cb',
     fontFamily: "'Lato', 'PT Sans', Helvetica, sans-serif",
-}
+};
 export const buttonStyle = {
     backgroundColor: 'transparent',
     border: 0,
@@ -16,7 +16,7 @@ export const buttonStyle = {
     color: '#ffb3cb',
     padding: '5px',
     cursor: 'pointer',
-}
+};
 export const recipientStyle = {
     fontSize: '12px',
     lineHeight: '12px',
@@ -69,60 +69,73 @@ export const USERS = ['Anna', 'Billy'];
 
 const createElement = React.createElement;
 
-export function Socket (onChange, onStatus, onMessage) {
-    let socket = null;
-    let user, port, recipient;
+export class Socket {
+
+    constructor(onChange, onStatus, onMessage) {
+        this.onChange = onChange;
+        this.onStatus = onStatus;
+        this.onMessage = onMessage;
+        this.socket = null;
+        this.user = null;
+        this.port = null;
+        this.connect = this.connect.bind(this);
+        this.sendIdent = this.sendIdent.bind(this);
+        this.sendIm = this.sendIm.bind(this);
+        this.disconnect = this.disconnect.bind(this);
+        this.onConnected = this.onConnected.bind(this);
+        this.onDisconnected = this.onDisconnected.bind(this);
+        this.onError = this.onError.bind(this);
+    }
+
 
     // User clicked connect button
-    function connect(selectedUser, selectedPort, selectedRecipient) {
+    connect(user, port) {
 
-        user = selectedUser;
-        port = selectedPort;
-        recipient = selectedRecipient;
+        this.user = user;
+        this.port = port;
 
         // Connect
         let host = `http://localhost:${port}`;
-        socket = io.connect(host);
+        this.socket = io.connect(host);
 
         // Set listeners
-        socket.on(CONNECT, onConnected);
-        socket.on(DISCONNECT, onDisconnected);
-        socket.on(CONNECT_ERR, onError);
-        socket.on(RECONNECT_ERR, onError);
+        this.socket.on(CONNECT, this.onConnected);
+        this.socket.on(DISCONNECT, this.onDisconnected);
+        this.socket.on(CONNECT_ERR, this.onError);
+        this.socket.on(RECONNECT_ERR, this.onError);
+    }
 
-        // Received connect event from socket
-        function onConnected() {
-            sendIdent(user);
-            socket.on(IM, onMessage);
-            onChange(true);
-        }
+    // Received connect event from socket
+    onConnected() {
+        this.sendIdent(this.user);
+        this.socket.on(IM, this.onMessage);
+        this.onChange(true);
+    }
 
-        // Received disconnect event from socket
-        function onDisconnected() {
-            onChange(false);
-        }
+    // Received disconnect event from socket
+    onDisconnected() {
+        this.onChange(false);
+    }
 
-        // Received error from socket
-        function onError(message) {
-            onStatus(message, true);
-            disconnect();
-        }
-
+    // Received error from socket
+    onError(message) {
+        this.onStatus(message, true);
+        this.disconnect();
     }
 
     // Send an identification message to the server
-    function sendIdent() {
-        socket.emit(IDENT, user);
+    sendIdent() {
+        this.socket.emit(IDENT, this.user);
     }
 
     // Send a message over the socket
-    function sendIm(message) {
-        socket.emit(IM, message);
+    sendIm(message) {
+        this.socket.emit(IM, message);
     }
 
     // Close the socket
-    function disconnect() {
-        socket.close();
+    disconnect() {
+        this.socket.close();
     }
 }
 
@@ -198,10 +211,11 @@ export class ConnectButton extends React.Component {
         super(props);
     }
     render() {
-        return createElement('button', {
+        return this.props.enabled ? createElement('button', {
             style: buttonStyle,
-            onClick: this.props.handleClick
-        }, this.props.connected ? 'Disconnect' : 'Connect')
+            onClick: this.props.handleClick,
+            disabled: !this.props.enabled
+        }, this.props.connected ? 'Disconnect' : 'Connect') : null;
     }
 }
 
@@ -222,21 +236,21 @@ export class StatusLine extends React.Component {
 export class Client extends React.Component {
     constructor(props) {
         super(props);
+        this.onStatusChange = this.onStatusChange.bind(this);
+        this.onConnectionChange = this.onConnectionChange.bind(this);
+        this.onToggleConnection = this.onToggleConnection.bind(this);
+        this.onIncomingMessage = this.onIncomingMessage.bind(this);
+        this.onSendMessage = this.onSendMessage.bind(this);
         this.socket = new Socket( this.onConnectionChange, this.onStatusChange, this.onIncomingMessage );
         this.state = {
             connected: false,
             status: 'Select a user and port, then click Connect.',
             isError: false,
             messages: [],
-            user: null,
-            recipient: null,
-            port: null
+            user: 'Anna',
+            recipient: 'Billy',
+            port: '3001'
         };
-        this.onStatusChange = this.onStatusChange.bind(this);
-        this.onConnectionChange = this.onConnectionChange.bind(this);
-        this.onToggleConnection = this.onToggleConnection.bind(this);
-        this.onIncomingMessage = this.onIncomingMessage.bind(this);
-        this.onSendMessage = this.onSendMessage.bind(this);
     }
 
     // The status message has changed
@@ -250,11 +264,10 @@ export class Client extends React.Component {
     // The socket's connection state changed
     onConnectionChange(isConnected) {
         this.setState({
-                status: isConnected ? 'Connected' : 'Disconnected',
-                connected: isConnected,
-                isError: false
-            }
-        );
+            status: isConnected ? 'Connected' : 'Disconnected',
+            connected: isConnected,
+            isError: false
+        });
     }
 
     // The client has received a message
@@ -288,8 +301,12 @@ export class Client extends React.Component {
     render() {
         return createElement('div', {style: clientStyle},
 
+
+
+
             // Connect button
             createElement(ConnectButton, {
+                enabled: (this.state.port && this.state.user),
                 connected: this.state.connected,
                 handleClick: this.onToggleConnection
             }),
