@@ -1,9 +1,10 @@
 // Styles
 export const clientStyle = {
     display: 'inline-block',
+    border: '1px solid #ACACAC',
     borderRadius: '2px',
     textAlign: 'right',
-    backgroundColor: '#0f0035',
+    backgroundColor: '#FCFCFC',
     color: '#ffb3cb',
     fontFamily: "'Lato', 'PT Sans', Helvetica, sans-serif",
 }
@@ -40,8 +41,10 @@ export const historyStyle = {
     'font-family': 'Arial, sans-serif',
 };
 export const statusStyle = {
-    fontSize: '10px',
-    lineHeight: '10px',
+    marginTop: '10px',
+    borderTop: '1px solid #ACACAC',
+    fontSize: '15px',
+    lineHeight: '15px',
     padding: '5px 5px 0',
     color: 'green',
 };
@@ -64,28 +67,18 @@ export const RECONNECT_ERR = 'reconnect_error';
 export const PORTS = [3001, 3002, 3003, 3004];
 export const USERS = ['Anna', 'Billy'];
 
+const createElement = React.createElement;
+
 export function Socket (onChange, onStatus, onMessage) {
-    let recipient = null;
     let socket = null;
-    let user = null;
-    let port = null;
-
-    function setUser(selected) {
-        user = selected;
-        recipient = USERS.find(u => u !== user);
-    }
-
-    // Set the port
-    function setPort(selected) {
-        port = selected;
-    }
-
-    function isReady() {
-        return port && user;
-    }
+    let user, port, recipient;
 
     // User clicked connect button
-    function connect() {
+    function connect(selectedUser, selectedPort, selectedRecipient) {
+
+        user = selectedUser;
+        port = selectedPort;
+        recipient = selectedRecipient;
 
         // Connect
         let host = `http://localhost:${port}`;
@@ -112,7 +105,7 @@ export function Socket (onChange, onStatus, onMessage) {
         // Received error from socket
         function onError(message) {
             onStatus(message, true);
-            socket.close();
+            disconnect();
         }
 
     }
@@ -124,12 +117,7 @@ export function Socket (onChange, onStatus, onMessage) {
 
     // Send a message over the socket
     function sendIm(message) {
-        socket.emit(IM, {
-            'from': user,
-            'to': recipient,
-            'text': message,
-            'forwarded': false
-        });
+        socket.emit(IM, message);
     }
 
     // Close the socket
@@ -145,11 +133,11 @@ export class UserSelector extends React.Component {
     }
 
     render() {
-        return React.createElement('select', {
+        return createElement('select', {
                 name: 'selectUser',
                 onChange: this.onChange
             },
-            USERS.map( user => React.createElement('option', {
+            USERS.map( user => createElement('option', {
                 value: user
             }))
         );
@@ -163,11 +151,11 @@ export class PortSelector extends React.Component {
     }
 
     render() {
-        return React.createElement('select', {
+        return createElement('select', {
                 name: 'selectPort',
                 onChange: this.onChange
             },
-            PORTS.map( port => React.createElement('option', {
+            PORTS.map( port => createElement('option', {
                 value: port
             }))
         );
@@ -198,101 +186,119 @@ export class MessageHistory extends React.Component {
     }
 
     render() {
-        return React.createElement('ul', {
+        return createElement('ul', {
             style: Object.assign({}, historyStyle )
-        }, this.list.map( (message, index) => React.createElement('li', {key: index}, message)));
+        }, this.list.map( (message, index) => createElement('li', {key: index}, message)));
     }
 }
 
+// Let user toggle the connection
 export class ConnectButton extends React.Component {
     constructor(props) { // connected, handleClick
         super(props);
     }
     render() {
-        return React.createElement('button', {
+        return createElement('button', {
             style: buttonStyle,
-            onClick: this.handleClick
-        }, this.connected ? 'Disconnect' : 'Connect')
+            onClick: this.props.handleClick
+        }, this.props.connected ? 'Disconnect' : 'Connect')
     }
 }
 
-// WORKING!
+// Display the connection status
 export class StatusLine extends React.Component {
     constructor(props) {
         super(props);
     }
 
     render() {
-        return React.createElement('div',
+        return createElement('div',
             {style: this.props.isError ? errorStatusStyle : statusStyle},
             this.props.status);
     }
 }
 
+// Main client component
 export class Client extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
+        this.socket = new Socket( this.onConnectionChange, this.onStatusChange, this.onIncomingMessage );
         this.state = {
-            connected: false
+            connected: false,
+            status: 'Select a user and port, then click Connect.',
+            isError: false,
+            messages: [],
+            user: null,
+            recipient: null,
+            port: null
+        };
+        this.onStatusChange = this.onStatusChange.bind(this);
+        this.onConnectionChange = this.onConnectionChange.bind(this);
+        this.onToggleConnection = this.onToggleConnection.bind(this);
+        this.onIncomingMessage = this.onIncomingMessage.bind(this);
+        this.onSendMessage = this.onSendMessage.bind(this);
+    }
+
+    // The status message has changed
+    onStatusChange(status, isError) {
+        this.setState({
+            status: status,
+            isError: isError
+        });
+    }
+
+    // The socket's connection state changed
+    onConnectionChange(isConnected) {
+        this.setState({
+                status: isConnected ? 'Connected' : 'Disconnected',
+                connected: isConnected,
+                isError: false
+            }
+        );
+    }
+
+    // The client has received a message
+    onIncomingMessage(message){
+        message.key = this.state.messages.length;
+        this.setState({
+            messages: this.state.messages.concat([message])
+        });
+    }
+
+    // User clicked the connect/disconnect button
+    onToggleConnection() {
+        if (this.state.connected) {
+            this.socket.disconnect();
+        } else if( this.state.port && this.state.user ) {
+            this.socket.connect(this.state.user, this.state.port);
         }
     }
 
+    // User wants to send an instant message
+    onSendMessage(message) {
+        this.socket.sendIM({
+            'from': this.state.user,
+            'to': this.state.recipient,
+            'text': message,
+            'forwarded': false
+        });
+    }
+
+    // Render the component
     render() {
-        return React.createElement(StatusLine,
-            {status: 'Select a user and port, then click Connect.',
-             isError: false});
-    }
-}
+        return createElement('div', {style: clientStyle},
 
+            // Connect button
+            createElement(ConnectButton, {
+                connected: this.state.connected,
+                handleClick: this.onToggleConnection
+            }),
 
-export function TimerDisplay({ title, margin='5px', time, active, onStart, onStop, onReset }) {
-    return React.createElement('div', { style: Object.assign({margin}, containerStyle) },
-        title && React.createElement('div', { style: titleStyle }, title),
-        React.createElement('div', { style: timeStyle }, time ? time.toFixed(3) : ""),
-        React.createElement('button', {
-            style: (onStart || onStop) ? buttonStyle : disabledButtonStyle,
-            onClick: active ? onStop : onStart,
-        }, active ? 'STOP' : 'START'),
-        React.createElement('button', {
-            style: (time === 0 || !onReset) ? disabledButtonStyle : buttonStyle,
-            onClick: onReset,
-        }, 'RESET')
-    )
-}
-
-export class TimerContainer extends React.Component {
-    constructor(props) {
-        super(props)
-        this.timer = new Timer(() => this.setState({
-            time: this.timer.time
-        }))
-        this.start = this.start.bind(this)
-        this.stop = this.stop.bind(this)
-        this.reset = this.reset.bind(this)
-    }
-
-    render() {
-        return React.createElement(TimerDisplay, {
-            title: this.props.title,
-            margin: this.props.margin,
-            time: this.timer.time,
-            active: this.timer.active,
-            onStart: this.start,
-            onStop: this.stop,
-            onReset: this.reset,
-        })
-    }
-
-    start() {
-        this.timer.start()
-        this.setState({ active: true, time: this.timer.time })
-    }
-    stop() {
-        this.timer.stop()
-        this.setState({ active: false })
-    }
-    reset() {
-        this.timer.reset()
-        this.setState({ time: 0 })
+            // Status Line
+            createElement(StatusLine, {
+                status: this.state.status,
+                isError: this.state.isError
+            })
+        )
     }
 }
