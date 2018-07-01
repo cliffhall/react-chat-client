@@ -8,7 +8,7 @@ const clientStyle = {
     width: '400px',
     display: 'block',
     border: '1px solid #ACACAC',
-    borderRadius: '2px',
+    borderRadius: '5px',
     textAlign: 'left',
     backgroundColor: '#FCFCFC',
     color: '#00000',
@@ -20,17 +20,18 @@ const footerStyle = {
     borderTop: '1px solid #ACACAC'
 };
 const buttonStyle = {
-    backgroundColor: 'transparent',
-    border: 0,
-    borderTop: '1px solid #ff6796',
+    backgroundColor: '#ffffff',
+    margin: '3px',
+    borderRadius: '5px',
+    border: '2px solid #9667ff',
     fontSize: '10px',
-    color: '#ff6796',
+    color: '#9667ff',
     padding: '5px',
     cursor: 'pointer'
 };
 const disabledButtonStyle = Object.assign({}, buttonStyle, {
     color: '#C3C3C3',
-    borderTop: '1px solid #C3C3C3',
+    border: '2px solid #C3C3C3',
     cursor: 'not-allowed'
 });
 const recipientStyle = {
@@ -57,9 +58,9 @@ const historyStyle = {
     'font-family': 'Arial, sans-serif',
 };
 const statusStyle = {
-    fontSize: '15px',
+    fontSize: '17px',
     lineHeight: '15px',
-    padding: '5px 5px 0',
+    padding: '10px 5px 0 5px',
     color: 'green',
     flexGrow: '2'
 };
@@ -87,6 +88,9 @@ const UPDATE_CLIENT = 'update_client';
 
 // Chat server ports
 const PORTS = [3001, 3002, 3003, 3004];
+
+// No Recipient
+const NO_RECIPIENT = 'Choose someone to message';
 
 // Socket manager
 export class Socket {
@@ -178,7 +182,7 @@ export class UserInput extends React.Component {
             // Label
             createElement('label',{
                 style: labelStyle,
-                htmlFor: 'selectUser'
+                htmlFor: 'userInput'
             }, 'Your Name'),
 
             // Text Input
@@ -211,7 +215,7 @@ export class PortSelector extends React.Component {
             createElement('label',{
                 style: labelStyle,
                 htmlFor: 'selectPort'
-            }, 'Select Port'),
+            }, 'Server Port'),
 
             // Dropdown
             createElement('select', {
@@ -249,16 +253,20 @@ export class RecipientSelector extends React.Component {
                 createElement('label', {
                     style: labelStyle,
                     htmlFor: 'selectRecipient'
-                }, 'Select Recipient'),
+                }, 'Recipient'),
 
                 // Dropdown
                 createElement('select', {
                         name: 'selectRecipient',
                         onChange: this.handleSelectChange
                     },
+                    createElement('option',{
+                        value: NO_RECIPIENT,
+                        key: -1
+                    },'Choose someone to message'),
                     this.props.users.map((user, index) => createElement('option', {
                         value: user,
-                        selected: this.props.recipient === user,
+                        defaultValue: this.props.recipient === user,
                         key: index
                     }, user))
                 )
@@ -293,6 +301,81 @@ export class StatusLine extends React.Component {
         return createElement('div',
             {style: this.props.isError ? errorStatusStyle : statusStyle},
             this.props.status);
+    }
+}
+
+// Let user send a message
+export class SendButton extends React.Component {
+    constructor(props) { // enabled, onSend
+        super(props);
+    }
+
+    render() {
+        return createElement('button', {
+            style: this.props.enabled ? buttonStyle : disabledButtonStyle,
+            onClick: this.props.onSend,
+            disabled: !this.props.enabled
+        }, 'Send');
+    }
+}
+
+// Text input for outgoing message
+export class MessageInput extends React.Component {
+    constructor(props) { // onChange
+        super(props);
+        this.handleInputChange = this.handleInputChange.bind(this);
+    }
+
+    // Pass the value of the input field up to the client
+    handleInputChange(event) {
+        this.props.onChange(event.target.value);
+    }
+
+    render() {
+        return createElement('span',{},
+
+            // Label
+            createElement('label',{
+                style: labelStyle,
+                htmlFor: 'messageInput'
+            }, 'Message'),
+
+            // Text Input
+            createElement('input', {
+                name: 'messageInput',
+                type: 'text',
+                onChange: this.handleInputChange
+            })
+        );
+    }
+}
+
+// Message input and send button
+export class MessageTransport extends React.Component {
+    constructor(props) { // connected, recipient, outgoingMessage, onChange, onSend
+        super(props);
+    }
+
+    render() {
+        let retval = null;
+        if( this.props.connected && this.props.recipient !== NO_RECIPIENT) {
+            retval = createElement('div',{style: fieldStyle},
+
+                // Outgoing message input and send button
+                createElement(MessageInput, { // enabled, onChange
+                    onChange: this.props.onChange
+                }),
+
+                // Send button
+                createElement(SendButton, {
+                    enabled: this.props.outgoingMessage,
+                    onSend: this.props.onSend
+                })
+
+            );
+        }
+
+        return retval;
     }
 }
 
@@ -338,6 +421,8 @@ export class Client extends React.Component {
         this.onUserChange = this.onUserChange.bind(this);
         this.onPortChange = this.onPortChange.bind(this);
         this.onUpdateClient = this.onUpdateClient.bind(this);
+        this.onRecipientChange = this.onRecipientChange.bind(this);
+        this.onMessageInputChange = this.onMessageInputChange.bind(this);
         this.socket = new Socket(
             this.onConnectionChange,
             this.onStatusChange,
@@ -349,7 +434,8 @@ export class Client extends React.Component {
             status: 'Select a user and port.',
             isError: false,
             user: null,
-            recipient: null,
+            recipient: NO_RECIPIENT,
+            outgoingMessage: null,
             messages: [],
             port: PORTS[0],
             users: []
@@ -385,18 +471,22 @@ export class Client extends React.Component {
     onToggleConnection() {
         if (this.state.connected) {
             this.socket.disconnect();
-            this.setState({users:[], recipient:null});
+            this.setState({
+                users:[],
+                recipient: NO_RECIPIENT,
+                outgoingMessage: null
+            });
         } else if( this.state.port && this.state.user ) {
             this.socket.connect(this.state.user, this.state.port);
         }
     }
 
     // User wants to send an instant message
-    onSendMessage(message) {
-        this.socket.sendIM({
+    onSendMessage() {
+        this.socket.sendIm({
             'from': this.state.user,
             'to': this.state.recipient,
-            'text': message,
+            'text': this.state.outgoingMessage,
             'forwarded': false
         });
     }
@@ -420,6 +510,12 @@ export class Client extends React.Component {
     // A recipient has been selected
     onRecipientChange(user) {
         this.setState({recipient: user});
+        if (user === NO_RECIPIENT) this.setState({outgoingMessage: null});
+    }
+
+    // The outgoing message text has changed
+    onMessageInputChange(text) {
+        this.setState({outgoingMessage: text})
     }
 
     // Render the component
@@ -443,6 +539,15 @@ export class Client extends React.Component {
                 users: this.state.users,
                 recipient: this.state.recipient,
                 onChange: this.onRecipientChange
+            }),
+
+            // Outgoing message input and send button
+            createElement(MessageTransport, {
+                connected: this.state.connected,
+                recipient: this.state.recipient,
+                outgoingMessage: this.state.outgoingMessage,
+                onChange: this.onMessageInputChange,
+                onSend: this.onSendMessage
             }),
 
             // Footer (status line / connection toggle)
