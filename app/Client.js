@@ -1,43 +1,49 @@
+/**
+ * React-based chat client for node-multi-server-chat
+ */
+const createElement = React.createElement;
+
 // Styles
-export const clientStyle = {
+const clientStyle = {
+    width: '400px',
     display: 'block',
     border: '1px solid #ACACAC',
     borderRadius: '2px',
     textAlign: 'left',
     backgroundColor: '#FCFCFC',
     color: '#00000',
-    fontFamily: "'Lato', 'PT Sans', Helvetica, sans-serif",
+    fontFamily: "'Lato', 'PT Sans', Helvetica, sans-serif"
 };
-export const footerStyle = {
+const footerStyle = {
     display: 'flex',
     flexDirection: 'row',
     borderTop: '1px solid #ACACAC'
 };
-export const buttonStyle = {
+const buttonStyle = {
     backgroundColor: 'transparent',
     border: 0,
     borderTop: '1px solid #ff6796',
     fontSize: '10px',
-    color: '#ffb3cb',
+    color: '#ff6796',
     padding: '5px',
-    cursor: 'pointer',
+    cursor: 'pointer'
 };
-export const disabledButtonStyle = Object.assign({}, buttonStyle, {
+const disabledButtonStyle = Object.assign({}, buttonStyle, {
     color: '#C3C3C3',
     borderTop: '1px solid #C3C3C3',
     cursor: 'not-allowed'
 });
-export const recipientStyle = {
+const recipientStyle = {
     fontSize: '12px',
     lineHeight: '12px',
     padding: '5px 5px 0',
     color: 'blue'};
-export const senderStyle = {
+const senderStyle = {
     fontSize: '12px',
     lineHeight: '12px',
     padding: '5px 5px 0',
     color: 'orange'};
-export const historyStyle = {
+const historyStyle = {
     position: 'absolute',
     top: '20px',
     bottom: '20px',
@@ -50,46 +56,46 @@ export const historyStyle = {
     'font-size': '16px',
     'font-family': 'Arial, sans-serif',
 };
-export const statusStyle = {
+const statusStyle = {
     fontSize: '15px',
     lineHeight: '15px',
     padding: '5px 5px 0',
     color: 'green',
     flexGrow: '2'
 };
-export const errorStatusStyle = {
+const errorStatusStyle = {
     fontSize: '10px',
     lineHeight: '10px',
     padding: '5px 5px 0',
     color: 'red',
 };
-export const fieldStyle = {
+const fieldStyle = {
     margin: '10px'
 };
-export const labelStyle = {
+const labelStyle = {
     marginRight: '10px'
 };
 
 // Message constants
-export const IM            = 'im';
-export const IDENT         = 'identify';
-export const CONNECT       = 'connect';
-export const DISCONNECT    = 'disconnect';
-export const CONNECT_ERR   = 'connect_error';
-export const RECONNECT_ERR = 'reconnect_error';
+const IM            = 'im';
+const IDENT         = 'identify';
+const CONNECT       = 'connect';
+const DISCONNECT    = 'disconnect';
+const CONNECT_ERR   = 'connect_error';
+const RECONNECT_ERR = 'reconnect_error';
+const UPDATE_CLIENT = 'update_client';
 
-// Defaults
-export const PORTS = [3001, 3002, 3003, 3004];
-
-const createElement = React.createElement;
+// Chat server ports
+const PORTS = [3001, 3002, 3003, 3004];
 
 // Socket manager
 export class Socket {
 
-    constructor(onChange, onStatus, onMessage) {
+    constructor(onChange, onStatus, onMessage, onUpdateClient) {
         this.onChange = onChange;
         this.onStatus = onStatus;
         this.onMessage = onMessage;
+        this.onUpdateClient = onUpdateClient;
         this.socket = null;
         this.user = null;
         this.port = null;
@@ -101,7 +107,6 @@ export class Socket {
         this.onDisconnected = this.onDisconnected.bind(this);
         this.onError = this.onError.bind(this);
     }
-
 
     // User clicked connect button
     connect(user, port) {
@@ -124,6 +129,7 @@ export class Socket {
     onConnected() {
         this.sendIdent(this.user);
         this.socket.on(IM, this.onMessage);
+        this.socket.on(UPDATE_CLIENT, this.onUpdateClient);
         this.onChange(true);
     }
 
@@ -291,15 +297,22 @@ export class Client extends React.Component {
         this.onSendMessage = this.onSendMessage.bind(this);
         this.onUserChange = this.onUserChange.bind(this);
         this.onPortChange = this.onPortChange.bind(this);
-        this.socket = new Socket( this.onConnectionChange, this.onStatusChange, this.onIncomingMessage );
+        this.onUpdateClient = this.onUpdateClient.bind(this);
+        this.socket = new Socket(
+            this.onConnectionChange,
+            this.onStatusChange,
+            this.onIncomingMessage,
+            this.onUpdateClient
+        );
         this.state = {
             connected: false,
             status: 'Select a user and port.',
             isError: false,
-            messages: [],
             user: null,
             recipient: null,
-            port: PORTS[0]
+            messages: [],
+            port: PORTS[0],
+            users: []
         };
     }
 
@@ -355,6 +368,12 @@ export class Client extends React.Component {
     // A port has been selected
     onPortChange(port) {
         this.setState({port: port});
+    }
+
+    // The server has updated us with a list of users
+    onUpdateClient(message){
+        let otherUsers = message.list.filter(user => user !== this.state.user);
+        this.setState({users: otherUsers});
     }
 
     // Render the component
