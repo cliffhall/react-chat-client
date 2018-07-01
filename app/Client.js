@@ -194,7 +194,7 @@ export class UserInput extends React.Component {
 
 // Dropdown to select port number to connect to
 export class PortSelector extends React.Component {
-    constructor(props) { // // connected, onChange
+    constructor(props) { // connected, onChange
         super(props);
         this.handleSelectChange = this.handleSelectChange.bind(this);
     }
@@ -225,6 +225,46 @@ export class PortSelector extends React.Component {
                 }, port))
             )
         )
+    }
+}
+
+// Dropdown to select recipient to message
+export class RecipientSelector extends React.Component {
+    constructor(props) { // users, recipient, onChange
+        super(props);
+        this.handleSelectChange = this.handleSelectChange.bind(this);
+    }
+
+    // Pass the value of the dropdown up to the client
+    handleSelectChange(event) {
+        this.props.onChange(event.target.value);
+    }
+
+    render() {
+        let retval = null;
+        if (this.props.users.length) {
+            retval = createElement('div', {style: fieldStyle},
+
+                // Label
+                createElement('label', {
+                    style: labelStyle,
+                    htmlFor: 'selectRecipient'
+                }, 'Select Recipient'),
+
+                // Dropdown
+                createElement('select', {
+                        name: 'selectRecipient',
+                        onChange: this.handleSelectChange
+                    },
+                    this.props.users.map((user, index) => createElement('option', {
+                        value: user,
+                        selected: this.props.recipient === user,
+                        key: index
+                    }, user))
+                )
+            )
+        }
+        return retval;
     }
 }
 
@@ -345,6 +385,7 @@ export class Client extends React.Component {
     onToggleConnection() {
         if (this.state.connected) {
             this.socket.disconnect();
+            this.setState({users:[], recipient:null});
         } else if( this.state.port && this.state.user ) {
             this.socket.connect(this.state.user, this.state.port);
         }
@@ -376,6 +417,11 @@ export class Client extends React.Component {
         this.setState({users: otherUsers});
     }
 
+    // A recipient has been selected
+    onRecipientChange(user) {
+        this.setState({recipient: user});
+    }
+
     // Render the component
     render() {
         return createElement('div', {style: clientStyle},
@@ -390,6 +436,13 @@ export class Client extends React.Component {
             createElement(PortSelector, {
                 connected: this.state.connected,
                 onChange: this.onPortChange
+            }),
+
+            // Recipient selector
+            createElement(RecipientSelector, {
+                users: this.state.users,
+                recipient: this.state.recipient,
+                onChange: this.onRecipientChange
             }),
 
             // Footer (status line / connection toggle)
