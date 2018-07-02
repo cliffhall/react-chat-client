@@ -5,7 +5,8 @@ const createElement = React.createElement;
 
 // Styles
 const clientStyle = {
-    width: '400px',
+    width: '475px',
+    height: '500px',
     display: 'block',
     border: '1px solid #ACACAC',
     borderRadius: '5px',
@@ -17,7 +18,7 @@ const clientStyle = {
 const footerStyle = {
     display: 'flex',
     flexDirection: 'row',
-    borderTop: '1px solid #ACACAC'
+    borderTop: '1px solid #ACACAC',
 };
 const buttonStyle = {
     backgroundColor: '#ffffff',
@@ -35,27 +36,25 @@ const disabledButtonStyle = Object.assign({}, buttonStyle, {
     cursor: 'not-allowed'
 });
 const recipientStyle = {
-    fontSize: '12px',
+    fontSize: '14px',
     lineHeight: '12px',
     padding: '5px 5px 0',
     color: 'blue'};
 const senderStyle = {
-    fontSize: '12px',
-    lineHeight: '12px',
+    fontSize: '14px',
+    padding: '5px',
+    lineHeight: '14px',
     padding: '5px 5px 0',
     color: 'orange'};
 const historyStyle = {
-    position: 'absolute',
-    top: '20px',
-    bottom: '20px',
-    left: '20px',
-    right: '20px',
+    borderTop: '1px solid #ccc',
+    height: '63.35%',
+    width: '100%',
     overflow: 'scroll',
-    margin: 0,
-    padding: 0,
-    border: '2px solid #ccc',
-    'font-size': '16px',
-    'font-family': 'Arial, sans-serif',
+    margin: '0px',
+    padding: '0px',
+    fontSize: '20px',
+    fontFamily: 'Arial, sans-serif',
 };
 const statusStyle = {
     fontSize: '17px',
@@ -64,12 +63,9 @@ const statusStyle = {
     color: 'green',
     flexGrow: '2'
 };
-const errorStatusStyle = {
-    fontSize: '10px',
-    lineHeight: '10px',
-    padding: '5px 5px 0',
-    color: 'red',
-};
+const errorStatusStyle = Object.assign({}, statusStyle, {
+    color: 'red'
+});
 const fieldStyle = {
     margin: '10px'
 };
@@ -91,6 +87,258 @@ const PORTS = [3001, 3002, 3003, 3004];
 
 // No Recipient
 const NO_RECIPIENT = 'Choose someone to message';
+
+// Text input for user name
+class UserInput extends React.Component {
+    constructor(props) { // connected, onChange
+        super(props);
+        this.handleInputChange = this.handleInputChange.bind(this);
+    }
+
+    // Pass the value of the input field up to the client
+    handleInputChange(event) {
+        this.props.onChange(event.target.value);
+    }
+
+    render() {
+        return createElement('div',{style: fieldStyle},
+
+            // Label
+            createElement('label',{
+                style: labelStyle,
+                htmlFor: 'userInput'
+            }, 'Your Name'),
+
+            // Text Input
+            createElement('input', {
+                name: 'userInput',
+                type: 'text',
+                onChange: this.handleInputChange,
+                disabled: this.props.connected
+            })
+        );
+    }
+}
+
+// Dropdown to select port number to connect to
+class PortSelector extends React.Component {
+    constructor(props) { // connected, onChange
+        super(props);
+        this.handleSelectChange = this.handleSelectChange.bind(this);
+    }
+
+    // Pass the value of the dropdown up to the client
+    handleSelectChange(event) {
+        this.props.onChange(event.target.value);
+    }
+
+    render() {
+        return createElement('div',{style: fieldStyle},
+
+            // Label
+            createElement('label',{
+                style: labelStyle,
+                htmlFor: 'selectPort'
+            }, 'Server Port'),
+
+            // Dropdown
+            createElement('select', {
+                    name: 'selectPort',
+                    onChange: this.handleSelectChange,
+                    disabled: this.props.connected
+                },
+                PORTS.map( (port, index) => createElement('option', {
+                    value: port,
+                    key: index
+                }, port))
+            )
+        )
+    }
+}
+
+// Dropdown to select recipient to message
+class RecipientSelector extends React.Component {
+    constructor(props) { // users, recipient, onChange
+        super(props);
+        this.handleSelectChange = this.handleSelectChange.bind(this);
+    }
+
+    // Pass the value of the dropdown up to the client
+    handleSelectChange(event) {
+        this.props.onChange(event.target.value);
+    }
+
+    render() {
+        let retval = null;
+        if (this.props.users.length) {
+            retval = createElement('div', {style: fieldStyle},
+
+                // Label
+                createElement('label', {
+                    style: labelStyle,
+                    htmlFor: 'selectRecipient'
+                }, 'Recipient'),
+
+                // Dropdown
+                createElement('select', {
+                        name: 'selectRecipient',
+                        onChange: this.handleSelectChange
+                    },
+                    createElement('option',{
+                        value: NO_RECIPIENT,
+                        key: -1
+                    },'Choose someone to message'),
+                    this.props.users.map((user, index) => createElement('option', {
+                        value: user,
+                        defaultValue: this.props.recipient === user,
+                        key: index
+                    }, user))
+                )
+            )
+        }
+        return retval;
+    }
+}
+
+// Let user toggle the connection
+class ConnectButton extends React.Component {
+    constructor(props) { // disabled, connected, handleClick
+        super(props);
+    }
+
+    render() {
+        return createElement('button', {
+            style: this.props.enabled ? buttonStyle : disabledButtonStyle,
+            onClick: this.props.handleClick,
+            disabled: !this.props.enabled
+        }, this.props.connected ? 'Disconnect' : 'Connect');
+    }
+}
+
+// Display the connection status
+class StatusLine extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        return createElement('div',
+            {style: this.props.isError ? errorStatusStyle : statusStyle},
+            this.props.status);
+    }
+}
+
+// Let user send a message
+class SendButton extends React.Component {
+    constructor(props) { // enabled, onSend
+        super(props);
+    }
+
+    render() {
+        return createElement('button', {
+            style: this.props.enabled ? buttonStyle : disabledButtonStyle,
+            onClick: this.props.onSend,
+            disabled: !this.props.enabled
+        }, 'Send');
+    }
+}
+
+// Text input for outgoing message
+class MessageInput extends React.Component {
+    constructor(props) { // outgoingMessage, onChange
+        super(props);
+        this.handleInputChange = this.handleInputChange.bind(this);
+    }
+
+    // Pass the value of the input field up to the client
+    handleInputChange(event) {
+        this.props.onChange(event.target.value);
+    }
+
+    render() {
+        return createElement('span',{},
+
+            // Label
+            createElement('label',{
+                style: labelStyle,
+                htmlFor: 'messageInput'
+            }, 'Message'),
+
+            // Text Input
+            createElement('input', {
+                name: 'messageInput',
+                type: 'text',
+                value: this.props.outgoingMessage,
+                onChange: this.handleInputChange
+            })
+        );
+    }
+}
+
+// Message input and send button
+class MessageTransport extends React.Component {
+    constructor(props) { // connected, recipient, outgoingMessage, onChange, onSend
+        super(props);
+    }
+
+    render() {
+        let retval = null;
+        if( this.props.connected && this.props.recipient !== NO_RECIPIENT) {
+            retval = createElement('div',{style: fieldStyle},
+
+                // Outgoing message input and send button
+                createElement(MessageInput, { // outgoingMessage, onChange
+                    outgoingMessage: this.props.outgoingMessage,
+                    onChange: this.props.onChange
+                }),
+
+                // Send button
+                createElement(SendButton, {
+                    enabled: this.props.outgoingMessage,
+                    onSend: this.props.onSend
+                })
+
+            );
+        }
+
+        return retval;
+    }
+}
+
+// A formatted instant message
+class InstantMessage extends React.Component {
+    constructor(props) { // user, key, message
+        super(props);
+    }
+
+    render() {
+        return createElement('li', {
+            style: (this.props.message.from === this.props.user) ? senderStyle : recipientStyle
+        }, createElement('strong', {},`${this.props.message.from}: `), this.props.message.text)
+    }
+}
+
+// The message history list
+class MessageHistory extends React.Component {
+    constructor(props) { // connected, user, messages
+        super(props);
+    }
+
+    render() {
+        let retval = null;
+        if (this.props.connected && this.props.messages.length) {
+            retval = createElement('ul', {style: historyStyle},
+                    this.props.messages.map((message, index) =>
+                        createElement(InstantMessage, {
+                            user: this.props.user,
+                            message: message,
+                            key: index
+                        }))
+                );
+        }
+        return retval;
+    }
+}
 
 // Socket manager
 export class Socket {
@@ -164,251 +412,6 @@ export class Socket {
     }
 }
 
-// Text input for user name
-export class UserInput extends React.Component {
-    constructor(props) { // connected, onChange
-        super(props);
-        this.handleInputChange = this.handleInputChange.bind(this);
-    }
-
-    // Pass the value of the input field up to the client
-    handleInputChange(event) {
-        this.props.onChange(event.target.value);
-    }
-
-    render() {
-        return createElement('div',{style: fieldStyle},
-
-            // Label
-            createElement('label',{
-                style: labelStyle,
-                htmlFor: 'userInput'
-            }, 'Your Name'),
-
-            // Text Input
-            createElement('input', {
-                name: 'userInput',
-                type: 'text',
-                onChange: this.handleInputChange,
-                disabled: this.props.connected
-            })
-        );
-    }
-}
-
-// Dropdown to select port number to connect to
-export class PortSelector extends React.Component {
-    constructor(props) { // connected, onChange
-        super(props);
-        this.handleSelectChange = this.handleSelectChange.bind(this);
-    }
-
-    // Pass the value of the dropdown up to the client
-    handleSelectChange(event) {
-        this.props.onChange(event.target.value);
-    }
-
-    render() {
-        return createElement('div',{style: fieldStyle},
-
-            // Label
-            createElement('label',{
-                style: labelStyle,
-                htmlFor: 'selectPort'
-            }, 'Server Port'),
-
-            // Dropdown
-            createElement('select', {
-                    name: 'selectPort',
-                    onChange: this.handleSelectChange,
-                    disabled: this.props.connected
-                },
-                PORTS.map( (port, index) => createElement('option', {
-                    value: port,
-                    key: index
-                }, port))
-            )
-        )
-    }
-}
-
-// Dropdown to select recipient to message
-export class RecipientSelector extends React.Component {
-    constructor(props) { // users, recipient, onChange
-        super(props);
-        this.handleSelectChange = this.handleSelectChange.bind(this);
-    }
-
-    // Pass the value of the dropdown up to the client
-    handleSelectChange(event) {
-        this.props.onChange(event.target.value);
-    }
-
-    render() {
-        let retval = null;
-        if (this.props.users.length) {
-            retval = createElement('div', {style: fieldStyle},
-
-                // Label
-                createElement('label', {
-                    style: labelStyle,
-                    htmlFor: 'selectRecipient'
-                }, 'Recipient'),
-
-                // Dropdown
-                createElement('select', {
-                        name: 'selectRecipient',
-                        onChange: this.handleSelectChange
-                    },
-                    createElement('option',{
-                        value: NO_RECIPIENT,
-                        key: -1
-                    },'Choose someone to message'),
-                    this.props.users.map((user, index) => createElement('option', {
-                        value: user,
-                        defaultValue: this.props.recipient === user,
-                        key: index
-                    }, user))
-                )
-            )
-        }
-        return retval;
-    }
-}
-
-// Let user toggle the connection
-export class ConnectButton extends React.Component {
-    constructor(props) { // disabled, connected, handleClick
-        super(props);
-    }
-
-    render() {
-        return createElement('button', {
-            style: this.props.enabled ? buttonStyle : disabledButtonStyle,
-            onClick: this.props.handleClick,
-            disabled: !this.props.enabled
-        }, this.props.connected ? 'Disconnect' : 'Connect');
-    }
-}
-
-// Display the connection status
-export class StatusLine extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
-    render() {
-        return createElement('div',
-            {style: this.props.isError ? errorStatusStyle : statusStyle},
-            this.props.status);
-    }
-}
-
-// Let user send a message
-export class SendButton extends React.Component {
-    constructor(props) { // enabled, onSend
-        super(props);
-    }
-
-    render() {
-        return createElement('button', {
-            style: this.props.enabled ? buttonStyle : disabledButtonStyle,
-            onClick: this.props.onSend,
-            disabled: !this.props.enabled
-        }, 'Send');
-    }
-}
-
-// Text input for outgoing message
-export class MessageInput extends React.Component {
-    constructor(props) { // onChange
-        super(props);
-        this.handleInputChange = this.handleInputChange.bind(this);
-    }
-
-    // Pass the value of the input field up to the client
-    handleInputChange(event) {
-        this.props.onChange(event.target.value);
-    }
-
-    render() {
-        return createElement('span',{},
-
-            // Label
-            createElement('label',{
-                style: labelStyle,
-                htmlFor: 'messageInput'
-            }, 'Message'),
-
-            // Text Input
-            createElement('input', {
-                name: 'messageInput',
-                type: 'text',
-                onChange: this.handleInputChange
-            })
-        );
-    }
-}
-
-// Message input and send button
-export class MessageTransport extends React.Component {
-    constructor(props) { // connected, recipient, outgoingMessage, onChange, onSend
-        super(props);
-    }
-
-    render() {
-        let retval = null;
-        if( this.props.connected && this.props.recipient !== NO_RECIPIENT) {
-            retval = createElement('div',{style: fieldStyle},
-
-                // Outgoing message input and send button
-                createElement(MessageInput, { // enabled, onChange
-                    onChange: this.props.onChange
-                }),
-
-                // Send button
-                createElement(SendButton, {
-                    enabled: this.props.outgoingMessage,
-                    onSend: this.props.onSend
-                })
-
-            );
-        }
-
-        return retval;
-    }
-}
-
-export class InstantMessage extends React.Component {
-    constructor(props) { // user, message
-        super(props);
-    }
-
-    render() {
-        return React.CreateElement( 'span', {
-            style: (this.message.from === this.user) ? senderStyle : recipientStyle
-        }, `${this.message.from}: ${this.message.text}`)
-    }
-}
-
-export class MessageHistory extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {list: []};
-        this.addMessage = this.addMessage.bind(this);
-    }
-
-    addMessage(message) {
-        this.setState(this.state.list.concat([message]));
-    }
-
-    render() {
-        return createElement('ul', {
-            style: Object.assign({}, historyStyle )
-        }, this.list.map( (message, index) => createElement('li', {key: index}, message)));
-    }
-}
-
 // Main client component
 export class Client extends React.Component {
     constructor(props) {
@@ -435,7 +438,7 @@ export class Client extends React.Component {
             isError: false,
             user: null,
             recipient: NO_RECIPIENT,
-            outgoingMessage: null,
+            outgoingMessage: '',
             messages: [],
             port: PORTS[0],
             users: []
@@ -474,9 +477,9 @@ export class Client extends React.Component {
             this.setState({
                 users:[],
                 recipient: NO_RECIPIENT,
-                outgoingMessage: null
+                outgoingMessage: ''
             });
-        } else if( this.state.port && this.state.user ) {
+        } else if(this.state.port && this.state.user) {
             this.socket.connect(this.state.user, this.state.port);
         }
     }
@@ -489,6 +492,7 @@ export class Client extends React.Component {
             'text': this.state.outgoingMessage,
             'forwarded': false
         });
+        this.setState({outgoingMessage: ''});
     }
 
     // A user has been selected
@@ -505,6 +509,7 @@ export class Client extends React.Component {
     onUpdateClient(message){
         let otherUsers = message.list.filter(user => user !== this.state.user);
         this.setState({users: otherUsers});
+        if (otherUsers.length) this.setState({recipient: NO_RECIPIENT});
     }
 
     // A recipient has been selected
@@ -548,6 +553,13 @@ export class Client extends React.Component {
                 outgoingMessage: this.state.outgoingMessage,
                 onChange: this.onMessageInputChange,
                 onSend: this.onSendMessage
+            }),
+
+            // Message History
+            createElement(MessageHistory, {
+                user: this.state.user,
+                messages: this.state.messages,
+                connected: this.state.connected
             }),
 
             // Footer (status line / connection toggle)
