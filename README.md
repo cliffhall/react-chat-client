@@ -61,10 +61,12 @@ The only downside is that there is no JSX.
 So instead of:
 
     render() {
-        return <span>
-            <label htmlFor="messageInput" style={labelStyle}>Message</label>
-            <input type="text" name="messageInput" value={this.props.outgoingMessage} onChange={this.handleInputChange}/>
-        </span>;
+        return (
+            <span>
+                <label htmlFor="messageInput" style={labelStyle}>Message</label>
+                <input type="text" name="messageInput" value={this.props.outgoingMessage} onChange={this.handleInputChange}/>
+            </span>
+        );
     }
 
 You'll see what that would actually compile to:
