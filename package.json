@@ -1,14 +1,18 @@
 {
   "name": "react-chat-client",
   "version": "1.0.0",
-  "description": "A simple chat client built in React for communicating with the node-multi-server-chat example",
-  "main": "index.js",
+  "description": "A simple React-based chat client for communicating with the node-multi-server-chat example",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "serve-react-client": "node app/client-server.js",
+    "init-submodules": "git submodule init; npm run update-submodules",
+    "update-submodules": "git submodule update --remote --recursive"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cliffhall/react-chat-client.git"
+  },
+  "dependencies": {
+    "express": "^4.16.3"
   },
   "author": "Cliff Hall",
   "license": "MIT",
