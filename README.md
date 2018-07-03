@@ -50,6 +50,15 @@ A simple Express server has been included to serve the React-based chat client, 
 
 ```npm run serve-react-client```
 
+Once that's done, open a couple of browser windows, navigate to ```http://localhost:8080/```, enter two different user
+names, choose a server port, and connect. It doesn't matter if you're on different ports or the same port, the servers
+will make sure your messages make it to each other. 
+
+Note that when you connect the first user, you won't see anything other than a status message of 'Connected' and the 
+'Connect' button will change to 'Disconnect'. As soon as you sign in another user, you'll see a dropdown with
+'Choose someone to message' in it. As users connect and disconnect, this list will be updated on all connected clients,
+and of course your own name won't be listed.
+
 ## Implementation
 The goal was to make this project as simple as possible, but toolchain configuration for React projects can be overwhelming 
 and hard to follow when you mix in Webpack, Babel, Browserify, etc. Throw architectural abstraction like Redux on top and
