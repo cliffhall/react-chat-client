@@ -46,9 +46,13 @@ const senderStyle = {
     lineHeight: '14px',
     padding: '5px 5px 0',
     color: 'orange'};
-const historyStyle = {
+const historyContainerStyle = {
     borderTop: '1px solid #ccc',
     height: '63.35%',
+    width: '100%'
+};
+const historyStyle = {
+    height: '100%',
     width: '100%',
     overflow: 'scroll',
     margin: '0px',
@@ -56,6 +60,7 @@ const historyStyle = {
     fontSize: '20px',
     fontFamily: 'Arial, sans-serif',
 };
+const historyAnchorStyle = {float:'left', clear: 'both'};
 const statusStyle = {
     fontSize: '17px',
     lineHeight: '15px',
@@ -322,19 +327,32 @@ class InstantMessage extends React.Component {
 class MessageHistory extends React.Component {
     constructor(props) { // connected, user, messages
         super(props);
+        this.messagesEnd = React.createRef();
+        this.scrollToBottom = this.scrollToBottom.bind(this);
+    }
+
+    scrollToBottom() {
+        ReactDOM.findDOMNode(this.messagesEnd.current).scrollIntoView({ behavior: 'smooth' });
+    }
+
+    componentDidUpdate() {
+        if (this.props.messages.length) this.scrollToBottom();
     }
 
     render() {
         let retval = null;
         if (this.props.connected && this.props.messages.length) {
-            retval = createElement('ul', {style: historyStyle},
+            retval = createElement('div', {style: historyContainerStyle},
+                createElement('ul', {style: historyStyle},
                     this.props.messages.map((message, index) =>
                         createElement(InstantMessage, {
                             user: this.props.user,
                             message: message,
-                            key: index
+                            key: index,
+                            ref: (index === this.props.messages.length -1)? this.messagesEnd : null
                         }))
-                );
+                )
+            );
         }
         return retval;
     }
