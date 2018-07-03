@@ -108,8 +108,12 @@ The ```Client``` component instantiates a ```Socket``` class instance, passing i
   * ```onIncomingMessage```, called when an instant message is received
   * ```onUpdateClient```, called when the server updates the client with the list of connected users
 
-
-
+### Component state management
+All state is kept in the ```Client``` component and passed down to the subcomponents as props, along with callbacks
+that manage that the state. Therefore when a subcomponent makes a change and invokes a callback, it indirectly updates 
+the state of the parent component, causing all other subcomponents that receive that particular bit of state to be 
+re-rendered. This is standard procedure in React, of course, but if you're just starting out, understanding this flow
+will help you follow what's happening.
 
 ## Two users chatting 
 ![Two users chatting](img/one-on-one-chat-with-message-history.png "Two users chatting")
