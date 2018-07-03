@@ -5,7 +5,7 @@ const createElement = React.createElement;
 
 // Styles
 const clientStyle = {
-    width: '475px',
+    width: '400px',
     height: '500px',
     display: 'block',
     border: '1px solid #ACACAC',
