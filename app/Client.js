@@ -336,7 +336,7 @@ class MessageHistory extends React.Component {
     }
 
     componentDidUpdate() {
-        if (this.props.messages.length) this.scrollToBottom();
+        if (this.props.connected && this.props.messages.length) this.scrollToBottom();
     }
 
     render() {
