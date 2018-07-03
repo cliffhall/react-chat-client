@@ -64,8 +64,7 @@ So instead of:
         return <span>
             <label htmlFor="messageInput" style={labelStyle}>Message</label>
             <input type="text" name="messageInput" value={this.props.outgoingMessage} onChange={this.handleInputChange}/>
-        </span>
-        );
+        </span>;
     }
 
 You'll see what that would actually compile to:
