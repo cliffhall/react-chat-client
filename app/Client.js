@@ -358,7 +358,7 @@ class MessageHistory extends React.Component {
 }
 
 // Socket manager
-export class Socket {
+class Socket {
 
     constructor(onChange, onStatus, onMessage, onUpdateClient) {
         this.onChange = onChange;

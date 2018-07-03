@@ -55,6 +55,7 @@ The goal was to make this project as simple as possible, but toolchain configura
 and hard to follow when you mix in Webpack, Babel, Browserify, etc. Throw architectural abstraction like Redux on top and
 beginners may just throw up their hands and walk away.
 
+### Minimal dependencies
 Fortunately, the scope of this project is small enough that it can be done with the React and ReactDOM libraries alone. 
 The only downside is that there is no JSX. 
 
@@ -94,6 +95,20 @@ You'll see what that would actually compile to:
             })
         );
     }
+
+### Protocol handling
+The protocol is defined in the [chat server README](https://github.com/cliffhall/node-multi-server-chat/blob/master/README.md), 
+so there's no need to duplicate that here. This client operates the same as the minimalist chat client in the server project, 
+except all the protocol handling is encapsulated in the ```Socket``` class of the ```Client``` module. 
+
+The ```Client``` component instantiates a ```Socket``` class instance, passing in callbacks for 
+  
+  * ```onConnectionChange```, called when the socket connection state changes
+  * ```onStatusChange```, called when the status message changes, allowing for green nominal messages and red error messages
+  * ```onIncomingMessage```, called when an instant message is received
+  * ```onUpdateClient```, called when the server updates the client with the list of connected users
+
+
 
 
 ## Two users chatting 
