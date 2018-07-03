@@ -4,7 +4,11 @@
   "description": "A simple React-based chat client for communicating with the node-multi-server-chat example",
   "scripts": {
     "serve-react-client": "node app/client-server.js",
-    "init-submodules": "git submodule init; npm run update-submodules",
+    "start-server-1": "node server/src/server/socket-server.js server/src/server/config.json server-1;",
+    "start-server-2": "node server/src/server/socket-server.js server/src/server/config.json server-2;",
+    "start-server-3": "node server/src/server/socket-server.js server/src/server/config.json server-3;",
+    "start-server-4": "node server/src/server/socket-server.js server/src/server/config.json server-4;",
+    "init-server": "git submodule init; npm run update-submodules; cd server; npm install",
     "update-submodules": "git submodule update --remote --recursive"
   },
   "repository": {
