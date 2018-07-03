@@ -39,13 +39,13 @@ const recipientStyle = {
     fontSize: '14px',
     lineHeight: '12px',
     padding: '5px 5px 0',
-    color: 'blue'};
+    color: '#89b9df'};
 const senderStyle = {
     fontSize: '14px',
     padding: '5px',
     lineHeight: '14px',
     padding: '5px 5px 0',
-    color: 'orange'};
+    color: '#c76499'};
 const historyContainerStyle = {
     borderTop: '1px solid #ccc',
     height: '63.35%',
@@ -60,7 +60,6 @@ const historyStyle = {
     fontSize: '20px',
     fontFamily: 'Arial, sans-serif',
 };
-const historyAnchorStyle = {float:'left', clear: 'both'};
 const statusStyle = {
     fontSize: '17px',
     lineHeight: '15px',
