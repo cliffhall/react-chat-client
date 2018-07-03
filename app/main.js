@@ -1,4 +1,4 @@
-import { Client, Socket } from './Client.js'
+import { Client } from './Client.js'
 
 function render() {
     ReactDOM.render(

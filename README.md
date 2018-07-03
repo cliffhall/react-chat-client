@@ -99,7 +99,6 @@ You'll see what that would actually compile to:
 ## Two users chatting 
 ![Two users chatting](img/one-on-one-chat-with-message-history.png "Two users chatting")
 
-
 ## TODO
 
   * Pretty it up with [React-Bootstrap](https://react-bootstrap.github.io/components/alerts/)
