@@ -63,8 +63,13 @@ So instead of:
     render() {
         return (
             <span>
-                <label htmlFor="messageInput" style={labelStyle}>Message</label>
-                <input type="text" name="messageInput" value={this.props.outgoingMessage} onChange={this.handleInputChange}/>
+                <label htmlFor="messageInput" 
+                       style={labelStyle}>Message</label>
+                       
+                <input type="text" 
+                       name="messageInput" 
+                       value={this.props.outgoingMessage} 
+                       onChange={this.handleInputChange}/>
             </span>
         );
     }
