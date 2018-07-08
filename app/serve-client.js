@@ -11,7 +11,7 @@ app.use(express.static('app'));
 
 app.get('/', function(req, res) {
     console.log('New client request');
-    res.sendFile(path.join(__dirname + '/react-chat-client.html'));
+    res.sendFile(path.join(__dirname + '/index.html'));
 });
 
 app.listen(port);

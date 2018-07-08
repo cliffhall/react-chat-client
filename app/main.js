@@ -1,4 +1,4 @@
-import { Client } from './Client.js'
+import { Client } from './components/Client.js'
 
 function render() {
     ReactDOM.render(
