@@ -1,11 +1,4 @@
-// Message constants
-const IM            = 'im';
-const IDENT         = 'identify';
-const CONNECT       = 'connect';
-const DISCONNECT    = 'disconnect';
-const CONNECT_ERR   = 'connect_error';
-const RECONNECT_ERR = 'reconnect_error';
-const UPDATE_CLIENT = 'update_client';
+import * as Protocol from '../constants/Protocol.js';
 
 // Socket manager
 export class Socket {
@@ -38,17 +31,17 @@ export class Socket {
         this.socket = io.connect(host);
 
         // Set listeners
-        this.socket.on(CONNECT, this.onConnected);
-        this.socket.on(DISCONNECT, this.onDisconnected);
-        this.socket.on(CONNECT_ERR, this.onError);
-        this.socket.on(RECONNECT_ERR, this.onError);
+        this.socket.on(Protocol.CONNECT, this.onConnected);
+        this.socket.on(Protocol.DISCONNECT, this.onDisconnected);
+        this.socket.on(Protocol.CONNECT_ERR, this.onError);
+        this.socket.on(Protocol.RECONNECT_ERR, this.onError);
     }
 
     // Received connect event from socket
     onConnected() {
         this.sendIdent(this.user);
-        this.socket.on(IM, this.onMessage);
-        this.socket.on(UPDATE_CLIENT, this.onUpdateClient);
+        this.socket.on(Protocol.IM, this.onMessage);
+        this.socket.on(Protocol.UPDATE_CLIENT, this.onUpdateClient);
         this.onChange(true);
     }
 
@@ -65,12 +58,12 @@ export class Socket {
 
     // Send an identification message to the server
     sendIdent() {
-        this.socket.emit(IDENT, this.user);
+        this.socket.emit(Protocol.IDENT, this.user);
     }
 
     // Send a message over the socket
     sendIm(message) {
-        this.socket.emit(IM, message);
+        this.socket.emit(Protocol.IM, message);
     }
 
     // Close the socket
