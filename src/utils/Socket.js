@@ -1,5 +1,5 @@
 import * as Protocol from '../constants/Protocol.js';
-
+import io from 'socket.io-client';
 // Socket manager
 export class Socket {
 

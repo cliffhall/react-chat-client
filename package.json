@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A simple React-based chat client for communicating with the node-multi-server-chat example",
   "scripts": {
-    "serve-react-client": "node app/serve-client.js",
+    "serve-client": "react-scripts start",
     "start-server-1": "node server/src/server/socket-server.js server/src/server/config.json server-1;",
     "start-server-2": "node server/src/server/socket-server.js server/src/server/config.json server-2;",
     "start-server-3": "node server/src/server/socket-server.js server/src/server/config.json server-3;",
@@ -16,7 +16,10 @@
     "url": "git+https://github.com/cliffhall/react-chat-client.git"
   },
   "dependencies": {
-    "express": "^4.16.3"
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0",
+    "react-scripts": "1.1.4",
+    "socket.io-client": "^1.5.1"
   },
   "author": "Cliff Hall",
   "license": "MIT",

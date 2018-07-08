@@ -37,7 +37,6 @@ export const recipientStyle = {
     color: '#89b9df'};
 export const senderStyle = {
     fontSize: '14px',
-    padding: '5px',
     lineHeight: '14px',
     padding: '5px 5px 0',
     color: '#c76499'};

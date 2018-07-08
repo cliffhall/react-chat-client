@@ -1,21 +1,19 @@
 /**
  * React-based chat client for node-multi-server-chat
  */
+import React, { Component } from 'react';
 import { PORTS, NO_RECIPIENT} from '../constants/Config.js';
-import { clientStyle, footerStyle } from '../constants/Styles.js';
+import { clientStyle } from '../constants/Styles.js';
 import { Socket } from '../utils/Socket.js';
 import { UserInput } from './UserInput.js'
 import { RecipientSelector } from './RecipientSelector.js';
 import { PortSelector } from './PortSelector.js';
-import { ConnectButton } from './ConnectButton.js';
-import { StatusLine } from './StatusLine.js';
 import { MessageTransport } from './MessageTransport.js';
 import { MessageHistory } from './MessageHistory.js';
-
-const createElement = React.createElement;
+import { Footer } from './Footer.js';
 
 // Main client component
-export class Client extends React.Component {
+export class Client extends Component {
     constructor(props) {
         super(props);
         this.onStatusChange = this.onStatusChange.bind(this);
@@ -127,59 +125,32 @@ export class Client extends React.Component {
 
     // Render the component
     render() {
-        return createElement('div', {style: clientStyle},
+        return <div style={clientStyle}>
 
-            // User selector
-            createElement(UserInput, {
-                connected: this.state.connected,
-                onChange: this.onUserChange
-            }),
+            <UserInput connected={this.state.connected} onChange={this.onUserChange}/>
 
-            // Port selector
-            createElement(PortSelector, {
-                connected: this.state.connected,
-                onChange: this.onPortChange
-            }),
+            <PortSelector connected={this.state.connected} onChange={this.onPortChange}/>
 
-            // Recipient selector
-            createElement(RecipientSelector, {
-                users: this.state.users,
-                recipient: this.state.recipient,
-                onChange: this.onRecipientChange
-            }),
+            <RecipientSelector users={this.state.users}
+                               recipient={this.state.recipient}
+                               onChange={this.onRecipientChange}/>
 
-            // Outgoing message input and send button
-            createElement(MessageTransport, {
-                connected: this.state.connected,
-                recipient: this.state.recipient,
-                outgoingMessage: this.state.outgoingMessage,
-                onChange: this.onMessageInputChange,
-                onSend: this.onSendMessage
-            }),
+            <MessageTransport connected={this.state.connected}
+                              recipient={this.state.recipient}
+                              outgoingMessage={this.state.outgoingMessage}
+                              onChange={this.onMessageInputChange}
+                              onSend={this.onSendMessage}/>
 
-            // Message History
-            createElement(MessageHistory, {
-                user: this.state.user,
-                messages: this.state.messages,
-                connected: this.state.connected
-            }),
+            <MessageHistory user={this.state.user}
+                            messages={this.state.messages}
+                            connected={this.state.connected}/>
 
-            // Footer (status line / connection toggle)
-            createElement('div', {style: footerStyle},
+            <Footer status={this.state.status}
+                    isError={this.state.isError}
+                    connectEnabled={(this.state.port && this.state.user)}
+                    connected={this.state.connected}
+                    handleToggle={this.onToggleConnection}/>
 
-                // Status Line
-                createElement(StatusLine, {
-                    status: this.state.status,
-                    isError: this.state.isError
-                }),
-
-                // Connect button
-                createElement(ConnectButton, {
-                    enabled: (this.state.port && this.state.user),
-                    connected: this.state.connected,
-                    handleClick: this.onToggleConnection
-                })
-            )
-        )
+        </div>;
     }
 }
