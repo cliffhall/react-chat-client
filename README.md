@@ -60,11 +60,11 @@ Note that when you connect the first user, you won't see anything other than a s
 and of course your own name won't be listed.
 
 ### Protocol handling
-The protocol is defined in the [chat server README](https://github.com/cliffhall/node-multi-server-chat/blob/master/README.md), 
+The protocol is defined in the [chat server README](https://github.com/cliffhall/node-multi-server-chat/blob/master/README.md#protocol), 
 so there's no need to duplicate that here. This client operates the same as the minimalist chat client in the server project, 
-except all the protocol handling is encapsulated in the ```Socket``` class of the ```Client``` module. 
+except all the protocol handling is encapsulated in the ```Socket``` utility class. 
 
-The ```Client``` component instantiates a ```Socket``` class instance, passing in callbacks for 
+The ```Client``` component instantiates a ```Socket``` instance, passing in callbacks for 
   
   * ```onConnectionChange```, called when the socket connection state changes
   * ```onStatusChange```, called when the status message changes, allowing for green nominal messages and red error messages
