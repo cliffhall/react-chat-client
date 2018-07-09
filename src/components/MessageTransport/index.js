@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { fieldStyle } from './../constants/Styles.js';
-import { NO_RECIPIENT } from '../constants/Config.js';
+import { fieldStyle } from '../../constants/Styles.js';
+import { NO_RECIPIENT } from '../../constants/Config.js';
 import { SendButton } from './SendButton.js';
 import { MessageInput } from './MessageInput.js';
 

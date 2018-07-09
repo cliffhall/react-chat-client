@@ -8,9 +8,9 @@ import { Socket } from '../utils/Socket.js';
 import { UserInput } from './UserInput.js'
 import { RecipientSelector } from './RecipientSelector.js';
 import { PortSelector } from './PortSelector.js';
-import { MessageTransport } from './MessageTransport.js';
-import { MessageHistory } from './MessageHistory.js';
-import { Footer } from './Footer.js';
+import { MessageTransport } from './MessageTransport';
+import { MessageHistory } from './MessageHistory';
+import { Footer } from './Footer';
 
 // Main client component
 export class Client extends Component {

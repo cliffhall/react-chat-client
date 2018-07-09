@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { statusStyle, errorStatusStyle } from './../constants/Styles.js';
+import { statusStyle, errorStatusStyle } from '../../constants/Styles.js';
 
 // Display the connection status
 export class StatusLine extends Component { // isError, status

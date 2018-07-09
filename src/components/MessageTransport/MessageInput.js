@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { labelStyle } from './../constants/Styles.js';
+import { labelStyle } from '../../constants/Styles.js';
 
 // Text input for outgoing message
 export class MessageInput extends Component {

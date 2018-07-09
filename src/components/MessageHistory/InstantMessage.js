@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { senderStyle, recipientStyle } from './../constants/Styles.js';
+import { senderStyle, recipientStyle } from '../../constants/Styles.js';
 
 // A formatted instant message
 export class InstantMessage extends Component { // user, key, message

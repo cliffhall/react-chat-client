@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { buttonStyle, disabledButtonStyle } from './../constants/Styles.js';
+import { buttonStyle, disabledButtonStyle } from '../../constants/Styles.js';
 
 // Let user toggle the connection
 export class ConnectButton extends Component { // disabled, connected, handleClick

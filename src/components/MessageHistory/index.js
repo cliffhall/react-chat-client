@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { historyContainerStyle, historyStyle } from './../constants/Styles.js';
+import { historyContainerStyle, historyStyle } from '../../constants/Styles.js';
 import { InstantMessage } from './InstantMessage.js';
 
 // The message history list

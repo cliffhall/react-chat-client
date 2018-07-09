@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { footerStyle } from './../constants/Styles.js';
+import { footerStyle } from '../../constants/Styles.js';
 import { ConnectButton } from './ConnectButton.js';
 import { StatusLine } from './StatusLine.js';
 

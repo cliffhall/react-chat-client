@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { fieldStyle, labelStyle } from './../constants/Styles.js';
+import { fieldStyle, labelStyle } from '../constants/Styles.js';
 import { NO_RECIPIENT } from '../constants/Config.js';
 
 // Dropdown to select recipient to message

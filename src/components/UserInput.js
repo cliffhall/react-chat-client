@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { fieldStyle, labelStyle } from './../constants/Styles.js';
+import { fieldStyle, labelStyle } from '../constants/Styles.js';
 
 // Text input for user name
 export class UserInput extends Component {
