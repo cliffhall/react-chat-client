@@ -12,6 +12,9 @@ This client differs from the minimalist one that comes with the server project i
   * It notifies you when your selected recipient disconnects
   * If your recipient reconnects, it notifies you and selects them again in the dropdown
 
+## Two users chatting 
+![Two users chatting](img/one-on-one-chat-with-message-history.png "Two users chatting")
+
 ## Setup
 
 ### Install Node and npm
@@ -80,9 +83,6 @@ The ```Client``` component instantiates a ```Socket``` instance, passing in call
   * ```onError```, called when the socket experiences an error condition, so status can be reported
   * ```onIncomingMessage```, called when an instant message is received
   * ```onUpdateClient```, called when the server updates the client with the list of connected users
-
-## Two users chatting 
-![Two users chatting](img/one-on-one-chat-with-message-history.png "Two users chatting")
 
 ## TODO
 
