@@ -18,7 +18,9 @@
   "dependencies": {
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
+    "react-redux": "^5.0.7",
     "react-scripts": "1.1.4",
+    "redux": "^4.0.0",
     "socket.io-client": "^1.5.1"
   },
   "author": "Cliff Hall",

@@ -1,12 +1,40 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
 import { buttonStyle, disabledButtonStyle } from '../../constants/Styles.js';
 
+import { abandonChat } from '../../actions/message';
+
 // Let user toggle the connection
-export class ConnectButton extends Component { // disabled, connected, handleClick
+class ConnectButton extends Component {
+
+    connectEnabled = () => (!!this.props.port && !!this.props.user);
+
+    // User clicked the connect/disconnect button
+    handleClick = () => {
+        if (this.props.connected) {
+            this.props.socket.disconnect();
+            this.props.dispatch(abandonChat());
+        } else if(this.props.port && this.props.user) {
+            this.props.socket.connect(this.props.user, this.props.port);
+        }
+    };
+
     render() {
-        return <button style={this.props.enabled ? buttonStyle : disabledButtonStyle}
-                       onClick={this.props.handleClick}
-                       disabled={!this.props.enabled}>{this.props.connected ? 'Disconnect' : 'Connect'}</button>;
+        return <button style={this.connectEnabled() ? buttonStyle : disabledButtonStyle}
+                       onClick={this.handleClick}
+                       disabled={!this.connectEnabled()}>{this.props.connected ? 'Disconnect' : 'Connect'}</button>;
     }
 }
 
+const mapStateToProps = (state) => ({
+    connected: state.socketState.connected,
+    port: state.socketState.port,
+    user: state.messageState.user
+});
+
+const mapDispatchToProps = (dispatch) => ({
+    dispatch: dispatch
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ConnectButton);

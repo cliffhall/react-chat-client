@@ -1,22 +1,31 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
 import { labelStyle } from '../../constants/Styles.js';
+import { outgoingMessageChanged } from '../../actions/message';
 
 // Text input for outgoing message
-export class MessageInput extends Component {
-    constructor(props) { // outgoingMessage, onChange
-        super(props);
-        this.handleInputChange = this.handleInputChange.bind(this);
-    }
+class MessageInput extends Component {
 
-    // Pass the value of the input field up to the client
-    handleInputChange(event) {
-        this.props.onChange(event.target.value);
-    }
+    // The outgoing message text has changed
+    handleOutgoingMessageChange = event => {
+        this.props.dispatch(outgoingMessageChanged(event.target.value));
+    };
 
     render() {
         return <span>
             <label style={labelStyle} htmlFor="messageInput">Message</label>
-            <input type="text" name="messageInput" value={this.props.outgoingMessage} onChange={this.handleInputChange}/>
+            <input type="text" name="messageInput"
+                   value={this.props.outgoingMessage}
+                   onChange={this.handleOutgoingMessageChange}/>
         </span>;
     }
 }
+
+const mapStateToProps = (state) => ({outgoingMessage: state.messageState.outgoingMessage || ''});
+
+const mapDispatchToProps = (dispatch) => ({
+    dispatch: dispatch
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(MessageInput);
