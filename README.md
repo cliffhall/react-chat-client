@@ -66,7 +66,7 @@ and of course your own name won't be listed.
 ## Implementation
 This React client uses:
   * [redux](https://github.com/reduxjs/redux) to manage application state
-  * [react-redux](https://github.com/reduxjs/react-redux), to inject the store's dispatch function and selected parts of the 
+  * [react-redux](https://github.com/reduxjs/react-redux) to inject the store's dispatch function and selected parts of the 
 application state into any component's props. 
 
 ## Protocol handling
