@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { buttonStyle, disabledButtonStyle } from '../../constants/Styles.js';
 
 // Let user toggle the connection
-export class ConnectButton extends Component { // disabled, connected, handleClick
+export class ConnectButton extends Component { // enabled, connected, handleClick
     render() {
         return <button style={this.props.enabled ? buttonStyle : disabledButtonStyle}
                        onClick={this.props.handleClick}

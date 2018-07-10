@@ -1,10 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Client } from './components/Client.js'
+import Client from './components/Client'
+import { Provider } from 'react-redux';
+import store from './store';
 
 function render() {
     ReactDOM.render(
-        React.createElement(Client),
+        <Provider store={store}>
+            <Client/>
+        </Provider>,
         document.getElementById('app')
     )
 }

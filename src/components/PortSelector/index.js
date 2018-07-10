@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { fieldStyle, labelStyle } from '../constants/Styles.js';
-import { PORTS } from '../constants/Config.js';
+import { fieldStyle, labelStyle } from '../../constants/Styles.js';
+import { PORTS } from '../../constants/Config.js';
 
 // Dropdown to select port number to connect to
 export class PortSelector extends Component {

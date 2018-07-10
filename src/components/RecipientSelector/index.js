@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { fieldStyle, labelStyle } from '../constants/Styles.js';
-import { NO_RECIPIENT } from '../constants/Config.js';
+import { fieldStyle, labelStyle } from '../../constants/Styles.js';
+import { NO_RECIPIENT } from '../../constants/Config.js';
 
 // Dropdown to select recipient to message
 export class RecipientSelector extends Component {

@@ -1,17 +1,11 @@
 import React, { Component } from 'react';
-import { fieldStyle, labelStyle } from '../constants/Styles.js';
+import { fieldStyle, labelStyle } from '../../constants/Styles.js';
 
 // Text input for user name
-export class UserInput extends Component {
-    constructor(props) { // connected, onChange
-        super(props);
-        this.handleInputChange = this.handleInputChange.bind(this);
-    }
+export class UserInput extends Component { // connected, onChange
 
     // Pass the value of the input field up to the client
-    handleInputChange(event) {
-        this.props.onChange(event.target.value);
-    }
+    handleInputChange = event => this.props.onChange(event.target.value);
 
     render() {
         return <div style={fieldStyle}>
