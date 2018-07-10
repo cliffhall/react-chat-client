@@ -51,25 +51,24 @@ class Client extends Component {
 
         // Has our recipient disconnected?
         let recipientLost = this.props.recipient !== NO_RECIPIENT && !(message.list.find(user => user === this.props.recipient));
+
+        // Has our previously disconnected recipient reconnected?
         let recipientFound = !!this.props.lostRecipient && !!message.list.find(user => user === this.props.lostRecipient);
 
         const dispatchUpdate = () => {
             this.props.dispatch(clientUpdateReceived(otherUsers, recipientLost));
         };
 
-        console.log(recipientFound, this.props.lostRecipient, RECIPIENT_FOUND);
-
-        if (recipientLost && !this.props.recipientLost) {
+        if (recipientLost && !this.props.recipientLost) { // recipient just now disconnected
             this.props.dispatch(statusChanged(`${this.props.recipient} ${RECIPIENT_LOST}`, true));
             dispatchUpdate();
-        } else if (recipientFound) {
+        } else if (recipientFound) { // previously lost recipient reconnected
             this.props.dispatch(statusChanged(`${this.props.lostRecipient} ${RECIPIENT_FOUND}`));
             dispatchUpdate();
             this.props.dispatch(recipientChanged(this.props.lostRecipient));
         } else {
             dispatchUpdate();
         }
-
     };
 
     // Render the component
