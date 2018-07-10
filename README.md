@@ -1,7 +1,7 @@
 # react-chat-client
 
 ## What is this?
-A simple React-based chat client for communicating with the 
+A React-based chat client for communicating with my 
 [node-multi-server-chat](https://github.com/cliffhall/node-multi-server-chat) example.
 
 This client differs from the minimalist one that comes with the server project in a few ways:
@@ -9,6 +9,8 @@ This client differs from the minimalist one that comes with the server project i
   * It lets you log in with any number of different users (instead of the predefined Anna and Billy)
   * It allows you to choose the recipient of each outgoing message from a dropdown of all connected users
   * It displays scrollable message history 
+  * It notifies you when your selected recipient disconnects
+  * If your recipient reconnects, it notifies you and selects them again in the dropdown
 
 ## Setup
 
@@ -26,6 +28,8 @@ project as a Git submodule. After you run the following command, you'll find tha
 with its node-modules installed.
 
 ```npm run install-server-module```
+
+## Launch
 
 ### Launching Socket Server Instances
 Several npm scripts have been defined in ```package.json``` for launching the socket server instances.
@@ -46,7 +50,7 @@ In each of four separate terminal windows, enter one of the following commands:
 ```npm run start-server-4```
 
 ### Launching the Server for the React Chat Client
-React scripts will compile the client bundle and start the server for the client.
+The [react-scripts](https://www.npmjs.com/package/react-scripts) library will compile the client bundle and start the server for the client.
 
 ```npm run serve-client```
 
@@ -59,23 +63,23 @@ Note that when you connect the first user, you won't see anything other than a s
 'Choose someone to message' in it. As users connect and disconnect, this list will be updated on all connected clients,
 and of course your own name won't be listed.
 
-### Protocol handling
-The protocol is defined in the [chat server README](https://github.com/cliffhall/node-multi-server-chat/blob/master/README.md#protocol), 
+## Implementation
+This React client uses [Redux](https://github.com/reduxjs/redux) to manage application state, and 
+[react-redux](https://github.com/reduxjs/react-redux), the official React bindings for Redux, which 
+allows each component to have the action dispatch function injected and to have selected parts of the 
+application state mapped into its props. 
+
+## Protocol handling
+The protocol is outlined in the [chat server README](https://github.com/cliffhall/node-multi-server-chat/blob/master/README.md#protocol), 
 so there's no need to duplicate that here. This client operates the same as the minimalist chat client in the server project, 
 except all the protocol handling is encapsulated in the ```Socket``` utility class. 
 
 The ```Client``` component instantiates a ```Socket``` instance, passing in callbacks for 
   
   * ```onConnectionChange```, called when the socket connection state changes
-  * ```onStatusChange```, called when the status message changes, allowing for green nominal messages and red error messages
+  * ```onError```, called when the socket experiences an error condition, so status can be reported
   * ```onIncomingMessage```, called when an instant message is received
   * ```onUpdateClient```, called when the server updates the client with the list of connected users
-
-### Component state management
-All state is kept in the ```Client``` component and passed down to the subcomponents as props, along with callbacks
-that manage the state. Therefore when a subcomponent makes a change and invokes a callback, it indirectly updates 
-the state of the parent component, causing all subcomponents that receive that particular bit of state to be 
-re-rendered. This is standard procedure in React when not a state management library like Redux or MobX.
 
 ## Two users chatting 
 ![Two users chatting](img/one-on-one-chat-with-message-history.png "Two users chatting")
@@ -83,7 +87,6 @@ re-rendered. This is standard procedure in React when not a state management lib
 ## TODO
 
   * Pretty it up with [React-Bootstrap](https://react-bootstrap.github.io/components/alerts/).
-  * Manage state with Redux or MobX.
   * Support separate message threads with different recipients by: 
     - Breaking messages array in to a hash of thread arrays keyed to user name. 
     - Adding a row of tabs over the message history component with a tab for each thread labeled by recipient name.
