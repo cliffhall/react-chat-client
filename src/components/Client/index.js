@@ -1,32 +1,23 @@
-/**
- * React-based chat client for node-multi-server-chat
- */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 // CONSTANTS
 import { clientStyle } from '../../constants/Styles.js'
+import { NO_RECIPIENT, RECIPIENT_LOST, RECIPIENT_FOUND } from '../../constants/Config.js';
 
 // COMPONENTS
-import { Socket } from '../../utils/Socket.js';
-import { UserInput } from '../UserInput'
-import { RecipientSelector } from '../RecipientSelector';
-import { PortSelector } from '../PortSelector';
-import { MessageTransport } from '../MessageTransport';
-import { MessageHistory } from '../MessageHistory';
-import { Footer } from '../Footer';
+import Socket from '../../utils/Socket.js';
+import UserInput from '../UserInput'
+import RecipientSelector from '../RecipientSelector';
+import PortSelector from '../PortSelector';
+import MessageTransport from '../MessageTransport';
+import MessageHistory from '../MessageHistory';
+import Footer from '../Footer';
 
 // ACTIONS
-import {
-    userChanged,
-    recipientChanged,
-    outgoingMessageChanged,
-    messageReceived,
-    clientUpdateReceived,
-    sendMessage,
-    abandonChat
-} from '../../actions/message';
-import { statusChanged, connectionChanged, portChanged } from '../../actions/socket';
+import { messageReceived, clientUpdateReceived, recipientChanged } from '../../actions/message';
+import { connectionChanged } from '../../actions/socket';
+import { statusChanged } from '../../actions/status';
 
 // Main client component
 class Client extends Component {
@@ -34,94 +25,77 @@ class Client extends Component {
         super(props);
         this.socket = new Socket(
             this.onConnectionChange,
-            this.onStatusChange,
+            this.onSocketError,
             this.onIncomingMessage,
             this.onUpdateClient
         );
     }
 
     // The socket's connection state changed
-    onConnectionChange = isConnected => this.props.dispatch(connectionChanged(isConnected));
+    onConnectionChange = isConnected => {
+        this.props.dispatch(connectionChanged(isConnected));
+        this.props.dispatch(statusChanged(isConnected ? 'Connected' : 'Disconnected'));
+    };
 
-    // The status message has changed
-    onStatusChange = (status, isError) => this.props.dispatch(statusChanged(status, isError));
+    // There has been a socket error
+    onSocketError = (status) => this.props.dispatch(statusChanged(status, true));
 
     // The client has received a message
     onIncomingMessage = message => this.props.dispatch(messageReceived(message));
 
-    // The server has updated us with a list of users
-    onUpdateClient = update => this.props.dispatch(clientUpdateReceived(update));
+    // The server has updated us with a list of all users currently on the system
+    onUpdateClient = message => {
 
-    // A port has been selected
-    onPortChange = port => this.props.dispatch(portChanged(port));
+        // Remove this user from the list
+        let otherUsers = message.list.filter(user => user !== this.props.user);
 
-    // A user has been selected
-    onUserChange = user => this.props.dispatch(userChanged(user));
+        // Has our recipient disconnected?
+        let recipientLost = this.props.recipient !== NO_RECIPIENT && !(message.list.find(user => user === this.props.recipient));
+        let recipientFound = !!this.props.lostRecipient && !!message.list.find(user => user === this.props.lostRecipient);
 
-    // A recipient has been selected
-    onRecipientChange = recipient => this.props.dispatch(recipientChanged(recipient));
+        const dispatchUpdate = () => {
+            this.props.dispatch(clientUpdateReceived(otherUsers, recipientLost));
+        };
 
-    // The outgoing message text has changed
-    onOutgoingMessageChange = text => this.props.dispatch(outgoingMessageChanged(text));
+        console.log(recipientFound, this.props.lostRecipient, RECIPIENT_FOUND);
 
-    // User wants to send an instant message
-    onSendMessage = () => this.props.dispatch(sendMessage(this.socket, this.props.outgoingMessage));
-
-    // User clicked the connect/disconnect button
-    onToggleConnection = () => {
-        if (this.props.connected) {
-            this.socket.disconnect();
-            this.props.dispatch(abandonChat());
-        } else if(this.props.port && this.props.user) {
-            this.socket.connect(this.props.user, this.props.port);
+        if (recipientLost && !this.props.recipientLost) {
+            this.props.dispatch(statusChanged(`${this.props.recipient} ${RECIPIENT_LOST}`, true));
+            dispatchUpdate();
+        } else if (recipientFound) {
+            this.props.dispatch(statusChanged(`${this.props.lostRecipient} ${RECIPIENT_FOUND}`));
+            dispatchUpdate();
+            this.props.dispatch(recipientChanged(this.props.lostRecipient));
+        } else {
+            dispatchUpdate();
         }
+
     };
 
     // Render the component
     render() {
         return <div style={clientStyle}>
 
-            <UserInput connected={this.props.connected} onChange={this.onUserChange}/>
+            <UserInput/>
 
-            <PortSelector connected={this.props.connected} onChange={this.onPortChange}/>
+            <PortSelector/>
 
-            <RecipientSelector users={this.props.users}
-                               recipient={this.props.recipient}
-                               onChange={this.onRecipientChange}/>
+            <RecipientSelector/>
 
-            <MessageTransport connected={this.props.connected}
-                              recipient={this.props.recipient}
-                              outgoingMessage={this.props.outgoingMessage}
-                              onChange={this.onOutgoingMessageChange}
-                              onSend={this.onSendMessage}/>
+            <MessageTransport socket={this.socket}/>
 
-            <MessageHistory user={this.props.user}
-                            messages={this.props.messages}
-                            connected={this.props.connected}/>
+            <MessageHistory/>
 
-            <Footer status={this.props.status}
-                    isError={this.props.isError}
-                    connectEnabled={(!!this.props.port && !!this.props.user)}
-                    connected={this.props.connected}
-                    handleToggle={this.onToggleConnection}/>
+            <Footer socket={this.socket}/>
 
         </div>;
     }
 }
 
 const mapStateToProps = (state) => ({
-    // Socket state
-    connected: state.socketState.connected,
-    status: state.socketState.status,
-    isError: state.socketState.isError,
-    ports: state.socketState.port,
-
-    // Message state
-    user: state.messageState.user,
     recipient: state.messageState.recipient,
-    outgoingMessage: state.messageState.outgoingMessage,
-    messages: state.messageState.messages,
-    users: state.messageState.users
+    lostRecipient: state.messageState.lostRecipient,
+    user: state.messageState.user
 });
 
 const mapDispatchToProps = (dispatch) => ({

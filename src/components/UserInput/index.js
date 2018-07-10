@@ -1,17 +1,30 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
 import { fieldStyle, labelStyle } from '../../constants/Styles.js';
+import { userChanged } from '../../actions/message';
 
 // Text input for user name
-export class UserInput extends Component { // connected, onChange
+class UserInput extends Component {
 
-    // Pass the value of the input field up to the client
-    handleInputChange = event => this.props.onChange(event.target.value);
+    // A user has been selected
+    handleUserChange = event => this.props.dispatch(userChanged(event.target.value));
 
     render() {
         return <div style={fieldStyle}>
             <label style={labelStyle} htmlFor="userInput">Your Name</label>
-            <input type="text" name="userInput" onChange={this.handleInputChange} disabled={this.props.connected}/>
+            <input type="text" name="userInput" onChange={this.handleUserChange} disabled={this.props.connected}/>
         </div>;
 
     }
 }
+
+const mapStateToProps = (state) => ({
+    connected: state.socketState.connected,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+    dispatch: dispatch
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserInput);

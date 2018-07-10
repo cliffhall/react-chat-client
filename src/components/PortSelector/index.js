@@ -1,25 +1,35 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
 import { fieldStyle, labelStyle } from '../../constants/Styles.js';
 import { PORTS } from '../../constants/Config.js';
 
-// Dropdown to select port number to connect to
-export class PortSelector extends Component {
-    constructor(props) { // connected, onChange
-        super(props);
-        this.handleSelectChange = this.handleSelectChange.bind(this);
-    }
+import { portChanged } from '../../actions/socket';
 
-    // Pass the value of the dropdown up to the client
-    handleSelectChange(event) {
-        this.props.onChange(event.target.value);
-    }
+
+// Dropdown to select port number to connect to
+class PortSelector extends Component {
+
+    // A port has been selected
+    handlePortChange = event => this.props.dispatch(portChanged(event.target.value));
 
     render() {
         return <div style={fieldStyle}>
             <label style={labelStyle} htmlFor="selectPort">Server Port</label>
-            <select name="selectPort" onChange={this.handleSelectChange} disabled={this.props.connected}>
+            <select name="selectPort" onChange={this.handlePortChange} disabled={this.props.connected}>
                 {PORTS.map( (port, index) => <option value={port} key={index}>{port}</option>)}
             </select>
         </div>;
     }
 }
+
+const mapStateToProps = (state) => ({
+    connected: state.socketState.connected,
+    status: state.socketState.status
+});
+
+const mapDispatchToProps = (dispatch) => ({
+    dispatch: dispatch
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(PortSelector);

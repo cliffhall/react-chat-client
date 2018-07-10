@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import { connect } from 'react-redux';
+
 import { historyContainerStyle, historyStyle } from '../../constants/Styles.js';
+
 import { InstantMessage } from './InstantMessage.js';
 
 // The message history list
-export class MessageHistory extends Component {
-    constructor(props) { // connected, user, messages
+class MessageHistory extends Component {
+    constructor(props) {
         super(props);
         this.messagesEnd = React.createRef();
-        this.scrollToBottom = this.scrollToBottom.bind(this);
     }
 
-    scrollToBottom() {
-        ReactDOM.findDOMNode(this.messagesEnd.current).scrollIntoView({ behavior: 'smooth' });
-    }
+    scrollToBottom = () => ReactDOM.findDOMNode(this.messagesEnd.current).scrollIntoView({ behavior: 'smooth' });
 
     componentDidUpdate() {
         if (this.props.connected && this.props.messages.length) this.scrollToBottom();
@@ -33,3 +33,16 @@ export class MessageHistory extends Component {
             : null;
     }
 }
+
+
+const mapStateToProps = (state) => ({
+    connected: state.socketState.connected,
+    user: state.messageState.user,
+    messages: state.messageState.messages
+});
+
+const mapDispatchToProps = (dispatch) => ({
+    dispatch: dispatch
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(MessageHistory);

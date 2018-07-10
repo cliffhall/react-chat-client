@@ -13,6 +13,8 @@ const INITIAL_STATE = {
     user: undefined,
     recipient: NO_RECIPIENT,
     outgoingMessage: '',
+    recipientLost: false,
+    lostRecipient: null,
     messages: [],
     users: []
 };
@@ -50,10 +52,14 @@ function messageReducer(state = INITIAL_STATE, action) {
             break;
 
         case CLIENT_UPDATE_RECEIVED:
-            let otherUsers = action.message.list.filter(user => user !== state.user);
             reduced = Object.assign({},
-                state, {users: otherUsers},
-                (otherUsers.length) ? {} : {recipient: NO_RECIPIENT}
+                state, {users: action.otherUsers, recipientLost: action.recipientLost },
+                (action.recipientLost)
+                    ? {recipient: NO_RECIPIENT, lostRecipient: state.recipient }
+                    : {},
+                (!action.recipientLost && !!state.lostRecipient)
+                    ? {recipient: state.lostRecipient }
+                    : {}
             );
             break;
 
@@ -75,7 +81,6 @@ function messageReducer(state = INITIAL_STATE, action) {
                 {users:[], recipient: NO_RECIPIENT, outgoingMessage: ''}
             );
             break;
-
 
         default:
             reduced = state;

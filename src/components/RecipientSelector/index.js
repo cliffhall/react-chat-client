@@ -1,29 +1,38 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
 import { fieldStyle, labelStyle } from '../../constants/Styles.js';
 import { NO_RECIPIENT } from '../../constants/Config.js';
+import { recipientChanged } from '../../actions/message';
 
 // Dropdown to select recipient to message
-export class RecipientSelector extends Component {
-    constructor(props) { // users, recipient, onChange
-        super(props);
-        this.handleSelectChange = this.handleSelectChange.bind(this);
-    }
+class RecipientSelector extends Component {
 
-    // Pass the value of the dropdown up to the client
-    handleSelectChange(event) {
-        this.props.onChange(event.target.value);
-    }
+    // A recipient has been selected
+    handleRecipientChange = event => this.props.dispatch(recipientChanged(event.target.value));
 
     render() {
         return (this.props.users.length)
             ? <div style={fieldStyle}>
                 <label style={labelStyle} htmlFor="selectRecipient">Recipient</label>
-                <select name="selectRecipient" onChange={this.handleSelectChange}>
-                    <option value={NO_RECIPIENT} key="-1">{NO_RECIPIENT}</option>
+                <select name="selectRecipient" onChange={this.handleRecipientChange}>
+                    <option disabled value={NO_RECIPIENT} selected={this.props.recipient === NO_RECIPIENT} key="-1">{NO_RECIPIENT}</option>
                     {this.props.users.map( (user, index) =>
-                        <option key={index} value={user} selected={this.props.recipient === user}>{user}</option>)}
+                        <option key={index} selected={this.props.recipient === user} value={user}>{user}</option>)}
                 </select>
               </div>
             : null;
     }
 }
+
+const mapStateToProps = (state) => ({
+    recipient: state.messageState.recipient,
+    users: state.messageState.users
+
+});
+
+const mapDispatchToProps = (dispatch) => ({
+    dispatch: dispatch
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(RecipientSelector);
