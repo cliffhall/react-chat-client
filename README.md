@@ -64,10 +64,10 @@ Note that when you connect the first user, you won't see anything other than a s
 and of course your own name won't be listed.
 
 ## Implementation
-This React client uses [Redux](https://github.com/reduxjs/redux) to manage application state, and 
-[react-redux](https://github.com/reduxjs/react-redux), the official React bindings for Redux, which 
-allows each component to have the action dispatch function injected and to have selected parts of the 
-application state mapped into its props. 
+This React client uses:
+  * [Redux](https://github.com/reduxjs/redux) to manage application state
+  * [react-redux](https://github.com/reduxjs/react-redux), to inject the store's dispatch function and selected parts of the 
+application state into any component's props. 
 
 ## Protocol handling
 The protocol is outlined in the [chat server README](https://github.com/cliffhall/node-multi-server-chat/blob/master/README.md#protocol), 
