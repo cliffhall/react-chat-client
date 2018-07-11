@@ -1,7 +1,7 @@
 {
   "name": "react-chat-client",
-  "version": "1.0.0",
-  "description": "A simple React-based chat client for communicating with the node-multi-server-chat example",
+  "version": "1.2.4",
+  "description": "A React-based chat client for communicating with the node-multi-server-chat example",
   "scripts": {
     "serve-client": "react-scripts start",
     "start-server-1": "node server/src/server/socket-server.js server/src/server/config.json server-1;",
