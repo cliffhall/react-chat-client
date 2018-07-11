@@ -1,3 +1,6 @@
+/**
+ * Since this is a child of Client should it just move to be a child of the Client folder?
+ */
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';

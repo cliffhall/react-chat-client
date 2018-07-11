@@ -1,3 +1,4 @@
+
 // Socket related actions
 export const CONNECTION_CHANGED = 'socket/connection-changed';
 export const PORT_CHANGED       = 'socket/port-changed';
