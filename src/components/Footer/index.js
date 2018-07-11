@@ -15,7 +15,6 @@ class Footer extends Component {
     }
 }
 
-
 const mapDispatchToProps = (dispatch) => ({
     dispatch: dispatch
 });

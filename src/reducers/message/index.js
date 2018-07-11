@@ -53,12 +53,12 @@ function messageReducer(state = INITIAL_STATE, action) {
 
         case CLIENT_UPDATE_RECEIVED:
             reduced = Object.assign({},
-                state, {users: action.otherUsers, recipientLost: action.recipientLost },
+                state, {users: action.otherUsers, recipientLost: action.recipientLost},
                 (action.recipientLost)
-                    ? {recipient: NO_RECIPIENT, lostRecipient: state.recipient }
+                    ? {recipient: NO_RECIPIENT, lostRecipient: state.recipient}
                     : {},
                 (!action.recipientLost && !!state.lostRecipient)
-                    ? {recipient: state.lostRecipient }
+                    ? {recipient: state.lostRecipient}
                     : {}
             );
             break;

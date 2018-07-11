@@ -15,7 +15,7 @@ class ConnectButton extends Component {
         if (this.props.connected) {
             this.props.socket.disconnect();
             this.props.dispatch(abandonChat());
-        } else if(this.props.port && this.props.user) {
+        } else if(this.connectEnabled()) {
             this.props.socket.connect(this.props.user, this.props.port);
         }
     };

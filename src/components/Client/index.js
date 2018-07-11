@@ -62,7 +62,7 @@ class Client extends Component {
         if (recipientLost && !this.props.recipientLost) { // recipient just now disconnected
             this.props.dispatch(statusChanged(`${this.props.recipient} ${RECIPIENT_LOST}`, true));
             dispatchUpdate();
-        } else if (recipientFound) { // previously lost recipient reconnected
+        } else if (recipientFound) { // previously lost recipient just reconnected
             this.props.dispatch(statusChanged(`${this.props.lostRecipient} ${RECIPIENT_FOUND}`));
             dispatchUpdate();
             this.props.dispatch(recipientChanged(this.props.lostRecipient));
