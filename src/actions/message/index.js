@@ -1,3 +1,4 @@
+
 // Message related actions
 export const USER_CHANGED             = 'message/user-changed';
 export const RECIPIENT_CHANGED        = 'message/recipient-changed';
