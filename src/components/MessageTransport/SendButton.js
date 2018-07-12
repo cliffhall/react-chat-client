@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { buttonStyle, disabledButtonStyle } from '../../constants/Styles.js';
 
-import { sendMessage } from '../../actions/message';
+import { sendMessage } from '../../store/message/actions';
 
 // Let user send a message
 class SendButton extends Component {

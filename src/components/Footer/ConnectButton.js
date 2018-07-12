@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { buttonStyle, disabledButtonStyle } from '../../constants/Styles.js';
 
-import { abandonChat } from '../../actions/message';
+import { abandonChat } from '../../store/message/actions';
 
 // Let user toggle the connection
 class ConnectButton extends Component {

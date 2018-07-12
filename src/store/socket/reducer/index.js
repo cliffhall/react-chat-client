@@ -1,5 +1,5 @@
-import { CONNECTION_CHANGED, PORT_CHANGED } from '../../actions/socket';
-import { PORTS } from '../../constants/Config.js';
+import { CONNECTION_CHANGED, PORT_CHANGED } from '../actions';
+import { PORTS } from '../../../constants/Config.js';
 
 const INITIAL_STATE = {
     connected: false,

@@ -6,8 +6,8 @@ import {
     CLIENT_UPDATE_RECEIVED,
     SEND_MESSAGE,
     ABANDON_CHAT
-} from '../../actions/message';
-import { NO_RECIPIENT } from '../../constants/Config.js';
+} from '../actions';
+import { NO_RECIPIENT } from '../../../constants/Config.js';
 
 const INITIAL_STATE = {
     user: undefined,

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { labelStyle } from '../../constants/Styles.js';
-import { outgoingMessageChanged } from '../../actions/message';
+import { outgoingMessageChanged } from '../../store/message/actions';
 
 // Text input for outgoing message
 class MessageInput extends Component {

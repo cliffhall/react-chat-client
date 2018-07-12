@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { fieldStyle, labelStyle } from '../../constants/Styles.js';
-import { userChanged } from '../../actions/message';
+import { userChanged } from '../../store/message/actions';
 
 // Text input for user name
 class UserInput extends Component {

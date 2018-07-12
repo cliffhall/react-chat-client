@@ -15,9 +15,9 @@ import MessageHistory from '../MessageHistory';
 import Footer from '../Footer';
 
 // ACTIONS
-import { messageReceived, clientUpdateReceived, recipientChanged } from '../../actions/message';
-import { connectionChanged } from '../../actions/socket';
-import { statusChanged } from '../../actions/status';
+import { messageReceived, clientUpdateReceived, recipientChanged } from '../../store/message/actions';
+import { connectionChanged } from '../../store/socket/actions';
+import { statusChanged } from '../../store/status/actions';
 
 // Main client component
 class Client extends Component {

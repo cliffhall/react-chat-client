@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { fieldStyle, labelStyle } from '../../constants/Styles.js';
 import { PORTS } from '../../constants/Config.js';
 
-import { portChanged } from '../../actions/socket';
+import { portChanged } from '../../store/socket/actions';
 
 
 // Dropdown to select port number to connect to

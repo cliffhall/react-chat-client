@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { fieldStyle, labelStyle } from '../../constants/Styles.js';
 import { NO_RECIPIENT } from '../../constants/Config.js';
-import { recipientChanged } from '../../actions/message';
+import { recipientChanged } from '../../store/message/actions';
 
 // Dropdown to select recipient to message
 class RecipientSelector extends Component {
