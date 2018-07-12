@@ -7,7 +7,7 @@ import {
     SEND_MESSAGE,
     ABANDON_CHAT
 } from '../actions';
-import { NO_RECIPIENT } from '../../../constants/Config.js';
+import { NO_RECIPIENT } from '../../../constants/UI.js';
 
 const INITIAL_STATE = {
     user: undefined,

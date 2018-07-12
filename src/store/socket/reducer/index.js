@@ -1,5 +1,5 @@
 import { CONNECTION_CHANGED, PORT_CHANGED } from '../actions';
-import { PORTS } from '../../../constants/Config.js';
+import { PORTS } from '../../../constants/UI.js';
 
 const INITIAL_STATE = {
     connected: false,

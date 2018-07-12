@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { fieldStyle } from '../../constants/Styles.js';
-import { NO_RECIPIENT } from '../../constants/Config.js';
+import { NO_RECIPIENT } from '../../constants/UI.js';
 
 import SendButton from './SendButton.js';
 import MessageInput from './MessageInput.js';

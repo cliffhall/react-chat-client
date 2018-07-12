@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 // CONSTANTS
 import { clientStyle } from '../../constants/Styles.js'
-import { NO_RECIPIENT, RECIPIENT_LOST, RECIPIENT_FOUND } from '../../constants/Config.js';
+import { NO_RECIPIENT, RECIPIENT_LOST, RECIPIENT_FOUND } from '../../constants/UI.js';
 
 // COMPONENTS
 import Socket from '../../utils/Socket.js';

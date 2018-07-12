@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { fieldStyle, labelStyle } from '../../constants/Styles.js';
-import { PORTS } from '../../constants/Config.js';
+import { PORTS } from '../../constants/UI.js';
 
 import { portChanged } from '../../store/socket/actions';
 

@@ -1,5 +1,5 @@
 import { STATUS_CHANGED } from '../actions';
-import { INITIAL_PROMPT } from '../../../constants/Config.js';
+import { INITIAL_PROMPT } from '../../../constants/UI.js';
 
 const INITIAL_STATE = {
     status: INITIAL_PROMPT,
