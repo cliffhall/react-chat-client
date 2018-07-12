@@ -3,7 +3,7 @@ import { PORTS } from '../../../constants/UI.js';
 
 const INITIAL_STATE = {
     connected: false,
-    port: String(PORTS[0])
+    port: PORTS[0]
 };
 
 function socketReducer(state=INITIAL_STATE, action) {
