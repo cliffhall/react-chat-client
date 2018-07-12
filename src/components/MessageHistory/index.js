@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 
 // CONSTANTS
-import { Styles } from '../../constants';
+import { Styles, UI } from '../../constants';
 
 // COMPONENTS
 import { InstantMessage } from './InstantMessage.js';
@@ -28,10 +28,10 @@ class MessageHistory extends Component {
 
     render() {
         const messages = this.getMessages();
-        return (this.props.connected && messages.length)
+        return (this.props.connected && this.props.recipient !== UI.NO_RECIPIENT)
             ? <div style={Styles.historyContainerStyle}>
                 <ul style={Styles.historyStyle}>
-                    {this.props.threads[this.props.recipient].map((message, index) =>
+                    {messages.map((message, index) =>
                         <InstantMessage user={this.props.user}
                                         message={message}
                                         key={index}
