@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { labelStyle } from '../../constants/Styles.js';
+// CONSTANTS
+import { Styles } from '../../constants';
+
+// ACTIONS
 import { outgoingMessageChanged } from '../../store/message/actions';
 
 // Text input for outgoing message
@@ -14,7 +17,7 @@ class MessageInput extends Component {
 
     render() {
         return <span>
-            <label style={labelStyle} htmlFor="messageInput">Message</label>
+            <label style={Styles.labelStyle} htmlFor="messageInput">Message</label>
             <input type="text" name="messageInput"
                    value={this.props.outgoingMessage}
                    onChange={this.handleOutgoingMessageChange}/>
@@ -22,10 +25,13 @@ class MessageInput extends Component {
     }
 }
 
+// Map required state into props
 const mapStateToProps = (state) => ({outgoingMessage: state.messageState.outgoingMessage || ''});
 
+// Map dispatch function into props
 const mapDispatchToProps = (dispatch) => ({
     dispatch: dispatch
 });
 
+// Export props-mapped HOC
 export default connect(mapStateToProps, mapDispatchToProps)(MessageInput);

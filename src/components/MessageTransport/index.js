@@ -1,20 +1,21 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { fieldStyle } from '../../constants/Styles.js';
-import { NO_RECIPIENT } from '../../constants/UI.js';
+// CONSTANTS
+import { Styles, UI } from '../../constants';
 
+// COMPONENTS
 import SendButton from './SendButton.js';
 import MessageInput from './MessageInput.js';
 
 // Message input and send button
 class MessageTransport extends Component {
 
-    isVisible = () => ( this.props.connected && this.props.recipient !== NO_RECIPIENT);
+    isVisible = () => ( this.props.connected && this.props.recipient !== UI.NO_RECIPIENT);
 
     render() {
         return this.isVisible()
-            ? <div style={fieldStyle}>
+            ? <div style={Styles.fieldStyle}>
                 <MessageInput/>
                 <SendButton socket={this.props.socket}/>
               </div>
@@ -22,6 +23,7 @@ class MessageTransport extends Component {
     }
 }
 
+// Map required state into props
 const mapStateToProps = (state) => ({
     connected: state.socketState.connected,
     port: state.socketState.port,
@@ -29,8 +31,10 @@ const mapStateToProps = (state) => ({
     recipient: state.messageState.recipient
 });
 
+// Map dispatch function into props
 const mapDispatchToProps = (dispatch) => ({
     dispatch: dispatch
 });
 
+// Export props-mapped HOC
 export default connect(mapStateToProps, mapDispatchToProps)(MessageTransport);

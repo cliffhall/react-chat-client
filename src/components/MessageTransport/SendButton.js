@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { buttonStyle, disabledButtonStyle } from '../../constants/Styles.js';
+// CONSTANTS
+import { Styles } from '../../constants';
 
+// ACTIONS
 import { sendMessage } from '../../store/message/actions';
 
 // Let user send a message
@@ -17,12 +19,13 @@ class SendButton extends Component {
     isEnabled = () => (!!this.props.outgoingMessage);
 
     render() {
-        return <button style={this.isEnabled() ? buttonStyle : disabledButtonStyle}
+        return <button style={this.isEnabled() ? Styles.buttonStyle : Styles.disabledButtonStyle}
                        onClick={this.handleClick}
                        disabled={!this.isEnabled()}>Send</button>;
     }
 }
 
+// Map required state into props
 const mapStateToProps = (state) => ({
     connected: state.socketState.connected,
     port: state.socketState.port,
@@ -30,8 +33,10 @@ const mapStateToProps = (state) => ({
     outgoingMessage: state.messageState.outgoingMessage
 });
 
+// Map dispatch function into props
 const mapDispatchToProps = (dispatch) => ({
     dispatch: dispatch
 });
 
+// Export props-mapped HOC
 export default connect(mapStateToProps, mapDispatchToProps)(SendButton);

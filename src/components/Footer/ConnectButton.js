@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { buttonStyle, disabledButtonStyle } from '../../constants/Styles.js';
+// CONSTANTS
+import { Styles } from '../../constants';
 
+// ACTIONS
 import { abandonChat } from '../../store/message/actions';
 
 // Let user toggle the connection
@@ -21,20 +23,23 @@ class ConnectButton extends Component {
     };
 
     render() {
-        return <button style={this.connectEnabled() ? buttonStyle : disabledButtonStyle}
+        return <button style={this.connectEnabled() ? Styles.buttonStyle : Styles.disabledButtonStyle}
                        onClick={this.handleClick}
                        disabled={!this.connectEnabled()}>{this.props.connected ? 'Disconnect' : 'Connect'}</button>;
     }
 }
 
+// Map required state into props
 const mapStateToProps = (state) => ({
     connected: state.socketState.connected,
     port: state.socketState.port,
     user: state.messageState.user
 });
 
+// Map dispatch function into props
 const mapDispatchToProps = (dispatch) => ({
     dispatch: dispatch
 });
 
+// Export props-mapped HOC
 export default connect(mapStateToProps, mapDispatchToProps)(ConnectButton);

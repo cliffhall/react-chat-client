@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 
-import { historyContainerStyle, historyStyle } from '../../constants/Styles.js';
+// CONSTANTS
+import { Styles } from '../../constants';
 
+// COMPONENTS
 import { InstantMessage } from './InstantMessage.js';
 
 // The message history list
@@ -21,8 +23,8 @@ class MessageHistory extends Component {
 
     render() {
         return (this.props.connected && this.props.messages.length)
-            ? <div style={historyContainerStyle}>
-                <ul style={historyStyle}>
+            ? <div style={Styles.historyContainerStyle}>
+                <ul style={Styles.historyStyle}>
                     {this.props.messages.map((message, index) =>
                         <InstantMessage user={this.props.user}
                                         message={message}
@@ -34,15 +36,17 @@ class MessageHistory extends Component {
     }
 }
 
-
+// Map required state into props
 const mapStateToProps = (state) => ({
     connected: state.socketState.connected,
     user: state.messageState.user,
     messages: state.messageState.messages
 });
 
+// Map dispatch function into props
 const mapDispatchToProps = (dispatch) => ({
     dispatch: dispatch
 });
 
+// Export props-mapped HOC
 export default connect(mapStateToProps, mapDispatchToProps)(MessageHistory);

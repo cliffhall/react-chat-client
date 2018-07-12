@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { fieldStyle, labelStyle } from '../../constants/Styles.js';
-import { NO_RECIPIENT } from '../../constants/UI.js';
+// CONSTANTS
+import { Styles, UI } from '../../constants';
+
+// ACTIONS
 import { recipientChanged } from '../../store/message/actions';
 
 // Dropdown to select recipient to message
@@ -13,10 +15,10 @@ class RecipientSelector extends Component {
 
     render() {
         return (this.props.users.length)
-            ? <div style={fieldStyle}>
-                <label style={labelStyle} htmlFor="selectRecipient">Recipient</label>
+            ? <div style={Styles.fieldStyle}>
+                <label style={Styles.labelStyle} htmlFor="selectRecipient">Recipient</label>
                 <select name="selectRecipient" onChange={this.handleRecipientChange}>
-                    <option disabled value={NO_RECIPIENT} selected={this.props.recipient === NO_RECIPIENT} key="-1">{NO_RECIPIENT}</option>
+                    <option disabled value={UI.NO_RECIPIENT} selected={this.props.recipient === UI.NO_RECIPIENT} key="-1">{UI.NO_RECIPIENT}</option>
                     {this.props.users.map( (user, index) =>
                         <option key={index} selected={this.props.recipient === user} value={user}>{user}</option>)}
                 </select>
@@ -25,14 +27,17 @@ class RecipientSelector extends Component {
     }
 }
 
+// Map required state into props
 const mapStateToProps = (state) => ({
     recipient: state.messageState.recipient,
     users: state.messageState.users
 
 });
 
+// Map dispatch function into props
 const mapDispatchToProps = (dispatch) => ({
     dispatch: dispatch
 });
 
+// Export props-mapped HOC
 export default connect(mapStateToProps, mapDispatchToProps)(RecipientSelector);

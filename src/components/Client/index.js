@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 // CONSTANTS
-import { clientStyle } from '../../constants/Styles.js'
-import { NO_RECIPIENT, RECIPIENT_LOST, RECIPIENT_FOUND } from '../../constants/UI.js';
+import { Styles, UI } from '../../constants';
 
 // COMPONENTS
 import Socket from '../../utils/Socket.js';
@@ -50,7 +49,7 @@ class Client extends Component {
         let otherUsers = message.list.filter(user => user !== this.props.user);
 
         // Has our recipient disconnected?
-        let recipientLost = this.props.recipient !== NO_RECIPIENT && !(message.list.find(user => user === this.props.recipient));
+        let recipientLost = this.props.recipient !== UI.NO_RECIPIENT && !(message.list.find(user => user === this.props.recipient));
 
         // Has our previously disconnected recipient reconnected?
         let recipientFound = !!this.props.lostRecipient && !!message.list.find(user => user === this.props.lostRecipient);
@@ -60,10 +59,10 @@ class Client extends Component {
         };
 
         if (recipientLost && !this.props.recipientLost) { // recipient just now disconnected
-            this.props.dispatch(statusChanged(`${this.props.recipient} ${RECIPIENT_LOST}`, true));
+            this.props.dispatch(statusChanged(`${this.props.recipient} ${UI.RECIPIENT_LOST}`, true));
             dispatchUpdate();
         } else if (recipientFound) { // previously lost recipient just reconnected
-            this.props.dispatch(statusChanged(`${this.props.lostRecipient} ${RECIPIENT_FOUND}`));
+            this.props.dispatch(statusChanged(`${this.props.lostRecipient} ${UI.RECIPIENT_FOUND}`));
             dispatchUpdate();
             this.props.dispatch(recipientChanged(this.props.lostRecipient));
         } else {
@@ -73,7 +72,7 @@ class Client extends Component {
 
     // Render the component
     render() {
-        return <div style={clientStyle}>
+        return <div style={Styles.clientStyle}>
 
             <UserInput/>
 
@@ -91,14 +90,17 @@ class Client extends Component {
     }
 }
 
+// Map required state into props
 const mapStateToProps = (state) => ({
     recipient: state.messageState.recipient,
     lostRecipient: state.messageState.lostRecipient,
     user: state.messageState.user
 });
 
+// Map dispatch function into props
 const mapDispatchToProps = (dispatch) => ({
     dispatch: dispatch
 });
 
+// Export props-mapped HOC
 export default connect(mapStateToProps, mapDispatchToProps)(Client);
