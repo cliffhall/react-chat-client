@@ -1,3 +1,4 @@
+// ACTIONS
 import {
     USER_CHANGED,
     RECIPIENT_CHANGED,
@@ -7,11 +8,14 @@ import {
     SEND_MESSAGE,
     ABANDON_CHAT
 } from '../actions';
-import { NO_RECIPIENT } from '../../../constants/UI.js';
 
+// CONSTANTS
+import { UI } from '../../../constants';
+
+// Initial state
 const INITIAL_STATE = {
     user: undefined,
-    recipient: NO_RECIPIENT,
+    recipient: UI.NO_RECIPIENT,
     outgoingMessage: '',
     recipientLost: false,
     lostRecipient: null,
@@ -19,6 +23,7 @@ const INITIAL_STATE = {
     users: []
 };
 
+// Message Reducer
 function messageReducer(state = INITIAL_STATE, action) {
     let reduced;
     switch (action.type)
@@ -33,7 +38,7 @@ function messageReducer(state = INITIAL_STATE, action) {
             reduced = Object.assign({},
                 state,
                 {recipient: action.recipient},
-                (action.recipient === NO_RECIPIENT) ? {outgoingMessage: ''} : {}
+                (action.recipient === UI.NO_RECIPIENT) ? {outgoingMessage: ''} : {}
             );
             break;
 
@@ -55,7 +60,7 @@ function messageReducer(state = INITIAL_STATE, action) {
             reduced = Object.assign({},
                 state, {users: action.otherUsers, recipientLost: action.recipientLost},
                 (action.recipientLost)
-                    ? {recipient: NO_RECIPIENT, lostRecipient: state.recipient}
+                    ? {recipient: UI.NO_RECIPIENT, lostRecipient: state.recipient}
                     : {},
                 (!action.recipientLost && !!state.lostRecipient)
                     ? {recipient: state.lostRecipient}
@@ -78,7 +83,7 @@ function messageReducer(state = INITIAL_STATE, action) {
         case ABANDON_CHAT:
             reduced = Object.assign({},
                 state,
-                {users:[], recipient: NO_RECIPIENT, outgoingMessage: ''}
+                {users:[], recipient: UI.NO_RECIPIENT, outgoingMessage: ''}
             );
             break;
 

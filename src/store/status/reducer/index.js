@@ -1,11 +1,16 @@
+// ACTIONS
 import { STATUS_CHANGED } from '../actions';
-import { INITIAL_PROMPT } from '../../../constants/UI.js';
 
+// CONSTANTS
+import { UI } from '../../../constants';
+
+// Initial state
 const INITIAL_STATE = {
-    status: INITIAL_PROMPT,
+    status: UI.INITIAL_PROMPT,
     isError: false
 };
 
+// Status reducer
 function statusReducer(state=INITIAL_STATE, action) {
     let reduced;
     switch (action.type)

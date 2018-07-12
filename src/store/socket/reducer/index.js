@@ -1,11 +1,16 @@
+// ACTIONS
 import { CONNECTION_CHANGED, PORT_CHANGED } from '../actions';
-import { PORTS } from '../../../constants/UI.js';
 
+// CONSTANTS
+import { UI } from '../../../constants';
+
+// Initial state
 const INITIAL_STATE = {
     connected: false,
-    port: PORTS[0]
+    port: UI.PORTS[0]
 };
 
+// Socket reducer
 function socketReducer(state=INITIAL_STATE, action) {
     let reduced;
     switch (action.type)
