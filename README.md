@@ -10,7 +10,9 @@ This client differs from the minimalist one that comes with the server project i
   * It allows you to choose the recipient of each outgoing message from a dropdown of all connected users
   * It displays scrollable message history 
   * It notifies you when your selected recipient disconnects
-  * If your recipient reconnects, it notifies you and selects them again in the dropdown
+  * If your lost recipient reconnects, it notifies you and selects them again in the dropdown
+  * It stores and displays messages by thread, so you can carry on separate conversations with different users
+  * When you receive a message from another user, it automatically selects them as a recipient and shows their thread
 
 ## Two users chatting 
 ![Two users chatting](img/one-on-one-chat-with-message-history.png "Two users chatting")

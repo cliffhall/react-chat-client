@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 
 // CONSTANTS
-import { Styles } from '../../constants';
+import { Styles, UI } from '../../constants';
 
 // COMPONENTS
 import { InstantMessage } from './InstantMessage.js';
@@ -18,18 +18,24 @@ class MessageHistory extends Component {
     scrollToBottom = () => ReactDOM.findDOMNode(this.messagesEnd.current).scrollIntoView({ behavior: 'smooth' });
 
     componentDidUpdate() {
-        if (this.props.connected && this.props.messages.length) this.scrollToBottom();
+        const messages = this.getMessages();
+        if (this.props.connected && messages.length) this.scrollToBottom();
     }
 
+    getMessages = () => {
+        return (this.props.threads[this.props.recipient]) ? this.props.threads[this.props.recipient] : [];
+    };
+
     render() {
-        return (this.props.connected && this.props.messages.length)
+        const messages = this.getMessages();
+        return (this.props.connected && this.props.recipient !== UI.NO_RECIPIENT)
             ? <div style={Styles.historyContainerStyle}>
                 <ul style={Styles.historyStyle}>
-                    {this.props.messages.map((message, index) =>
+                    {messages.map((message, index) =>
                         <InstantMessage user={this.props.user}
                                         message={message}
                                         key={index}
-                                        ref={(index === this.props.messages.length -1) ? this.messagesEnd : null}/>)}
+                                        ref={(index === messages.length -1) ? this.messagesEnd : null}/>)}
                 </ul>
               </div>
             : null;
@@ -40,7 +46,8 @@ class MessageHistory extends Component {
 const mapStateToProps = (state) => ({
     connected: state.socketState.connected,
     user: state.messageState.user,
-    messages: state.messageState.messages
+    threads: state.messageState.threads,
+    recipient: state.messageState.recipient
 });
 
 // Map dispatch function into props
