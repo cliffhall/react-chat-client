@@ -15,7 +15,7 @@ This client differs from the minimalist one that comes with the server project i
   * When you receive a message from another user, it automatically selects them as a recipient and shows their thread
   
 You can [read a tutorial](https://itnext.io/building-a-react-based-chat-client-with-redux-816b47cb8c74) 
-about how it was built with just React and ReactDOM and then refactored to use Redux.
+about how it was built with only React and then refactored to use Redux.
 
 ## Two users chatting 
 ![Two users chatting](img/one-on-one-chat-with-message-history.png "Two users chatting")
