@@ -21,7 +21,7 @@ export default class Socket {
         this.port = port;
 
         // Connect
-        let host = `http://localhost:${port}`;
+        const host = `http://localhost:${port}`;
         this.socket = io.connect(host);
 
         // Set listeners

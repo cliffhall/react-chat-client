@@ -51,19 +51,17 @@ function messageReducer(state = INITIAL_STATE, action) {
 
         case MESSAGE_RECEIVED:
             // Find the thread this message belongs to
-            let isSentEcho = (action.message.from === state.user);
-            let thread, recipient = isSentEcho ? action.message.to : action.message.from;
+            const isSentEcho = (action.message.from === state.user);
+            const recipient = isSentEcho ? action.message.to : action.message.from;
 
             // Rendered InstantMessage components need a key, we'll use array index
-            let messageKey = (!!state.threads[recipient]) ? state.threads[recipient].length : 0;
-            let keyedMessage = Object.assign({}, action.message, {key: messageKey});
+            const messageKey = (!!state.threads[recipient]) ? state.threads[recipient].length : 0;
+            const keyedMessage = Object.assign({}, action.message, {key: messageKey});
 
             // Add the keyed message to a clone of the appropriate thread
-            if (state.threads[recipient]) {
-                thread = state.threads[recipient].concat([keyedMessage]);
-            } else {
-                thread = [keyedMessage];
-            }
+            const thread = (state.threads[recipient])
+                ? state.threads[recipient].concat([keyedMessage])
+                : [keyedMessage];
 
             // Reduce
             reduced = Object.assign({}, state, {

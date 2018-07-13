@@ -46,13 +46,13 @@ class Client extends Component {
     onUpdateClient = message => {
 
         // Remove this user from the list
-        let otherUsers = message.list.filter(user => user !== this.props.user);
+        const otherUsers = message.list.filter(user => user !== this.props.user);
 
         // Has our recipient disconnected?
-        let recipientLost = this.props.recipient !== UI.NO_RECIPIENT && !(message.list.find(user => user === this.props.recipient));
+        const recipientLost = this.props.recipient !== UI.NO_RECIPIENT && !(message.list.find(user => user === this.props.recipient));
 
         // Has our previously disconnected recipient reconnected?
-        let recipientFound = !!this.props.lostRecipient && !!message.list.find(user => user === this.props.lostRecipient);
+        const recipientFound = !!this.props.lostRecipient && !!message.list.find(user => user === this.props.lostRecipient);
 
         const dispatchUpdate = () => {
             this.props.dispatch(clientUpdateReceived(otherUsers, recipientLost));
