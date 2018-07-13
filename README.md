@@ -13,6 +13,9 @@ This client differs from the minimalist one that comes with the server project i
   * If your lost recipient reconnects, it notifies you and selects them again in the dropdown
   * It stores and displays messages by thread, so you can carry on separate conversations with different users
   * When you receive a message from another user, it automatically selects them as a recipient and shows their thread
+  
+You can [read a tutorial](https://itnext.io/building-a-react-based-chat-client-with-redux-816b47cb8c74) 
+about how it was built with just React and ReactDOM and then refactored to use Redux.
 
 ## Two users chatting 
 ![Two users chatting](img/one-on-one-chat-with-message-history.png "Two users chatting")
@@ -89,7 +92,3 @@ The ```Client``` component instantiates a ```Socket``` instance, passing in call
 ## TODO
 
   * Pretty it up with [React-Bootstrap](https://react-bootstrap.github.io/components/alerts/).
-  * Support separate message threads with different recipients by: 
-    - Breaking messages array in to a hash of thread arrays keyed to user name. 
-    - Adding a row of tabs over the message history component with a tab for each thread labeled by recipient name.
-    - When selecting a tab, the history window should show that thread of messages and the recipient chooser should change automatically.
