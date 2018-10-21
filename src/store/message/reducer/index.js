@@ -5,8 +5,8 @@ import {
     OUTGOING_MESSAGE_CHANGED,
     MESSAGE_RECEIVED,
     CLIENT_UPDATE_RECEIVED,
-    SEND_MESSAGE,
-    ABANDON_CHAT
+    ABANDON_CHAT,
+    MESSAGE_SENT
 } from '../actions';
 
 // CONSTANTS
@@ -84,15 +84,9 @@ function messageReducer(state = INITIAL_STATE, action) {
             );
             break;
 
-        case SEND_MESSAGE:
-            action.socket.sendIm({
-                'from': state.user,
-                'to': state.recipient,
-                'text': state.outgoingMessage,
-                'forwarded': false
-            });
+        case MESSAGE_SENT:
             reduced = Object.assign({},
-                state, {outgoingMessage: action.user}
+                state, {outgoingMessage: ''}
             );
             break;
 

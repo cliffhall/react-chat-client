@@ -23,10 +23,5 @@ const mapStateToProps = (state) => ({
 
 });
 
-// Map dispatch function into props
-const mapDispatchToProps = (dispatch) => ({
-    dispatch: dispatch
-});
-
 // Export props-mapped HOC
-export default connect(mapStateToProps, mapDispatchToProps)(StatusLine);
+export default connect(mapStateToProps)(StatusLine);

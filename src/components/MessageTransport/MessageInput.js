@@ -12,7 +12,7 @@ class MessageInput extends Component {
 
     // The outgoing message text has changed
     handleOutgoingMessageChange = event => {
-        this.props.dispatch(outgoingMessageChanged(event.target.value));
+        this.props.outgoingMessageChanged(event.target.value);
     };
 
     render() {
@@ -30,7 +30,7 @@ const mapStateToProps = (state) => ({outgoingMessage: state.messageState.outgoin
 
 // Map dispatch function into props
 const mapDispatchToProps = (dispatch) => ({
-    dispatch: dispatch
+    outgoingMessageChanged: message => dispatch(outgoingMessageChanged(message))
 });
 
 // Export props-mapped HOC

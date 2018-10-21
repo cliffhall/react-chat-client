@@ -50,10 +50,5 @@ const mapStateToProps = (state) => ({
     recipient: state.messageState.recipient
 });
 
-// Map dispatch function into props
-const mapDispatchToProps = (dispatch) => ({
-    dispatch: dispatch
-});
-
 // Export props-mapped HOC
-export default connect(mapStateToProps, mapDispatchToProps)(MessageHistory);
+export default connect(mapStateToProps)(MessageHistory);
