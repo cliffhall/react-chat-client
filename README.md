@@ -80,9 +80,9 @@ application state into any component's props.
 ## Protocol handling
 The protocol is outlined in the [chat server README](https://github.com/cliffhall/node-multi-server-chat/blob/master/README.md#protocol), 
 so there's no need to duplicate that here. This client operates the same as the minimalist chat client in the server project, 
-except all the protocol handling is encapsulated in the ```Socket``` utility class. 
+except all the protocol handling is encapsulated in the ```Socket``` class.
 
-The ```Client``` component instantiates a ```Socket``` instance, passing in callbacks for 
+The ```socketMiddleware``` middleware instantiates a ```Socket``` instance, passing in callbacks for
   
   * ```onConnectionChange```, called when the socket connection state changes
   * ```onError```, called when the socket experiences an error condition, so status can be reported
