@@ -6,6 +6,7 @@ import { Styles } from '../../constants';
 
 // ACTIONS
 import { abandonChat } from '../../store/message/actions';
+import { connectSocket, disconnectSocket } from '../../store/socket/actions';
 
 // Let user toggle the connection
 class ConnectButton extends Component {
@@ -15,10 +16,10 @@ class ConnectButton extends Component {
     // User clicked the connect/disconnect button
     handleClick = () => {
         if (this.props.connected) {
-            this.props.socket.disconnect();
-            this.props.dispatch(abandonChat());
+            this.props.disconnectSocket();
+            this.props.abandonChat();
         } else if(this.connectEnabled()) {
-            this.props.socket.connect(this.props.user, this.props.port);
+            this.props.connectSocket();
         }
     };
 
@@ -38,7 +39,10 @@ const mapStateToProps = (state) => ({
 
 // Map dispatch function into props
 const mapDispatchToProps = (dispatch) => ({
-    dispatch: dispatch
+    disconnectSocket: () => dispatch(disconnectSocket()),
+    connectSocket: () => dispatch(connectSocket()),
+    abandonChat: () => dispatch(abandonChat())
+
 });
 
 // Export props-mapped HOC

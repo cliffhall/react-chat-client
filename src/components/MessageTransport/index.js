@@ -17,7 +17,7 @@ class MessageTransport extends Component {
         return this.isVisible()
             ? <div style={Styles.fieldStyle}>
                 <MessageInput/>
-                <SendButton socket={this.props.socket}/>
+                <SendButton/>
               </div>
             : null;
     }
@@ -31,10 +31,5 @@ const mapStateToProps = (state) => ({
     recipient: state.messageState.recipient
 });
 
-// Map dispatch function into props
-const mapDispatchToProps = (dispatch) => ({
-    dispatch: dispatch
-});
-
 // Export props-mapped HOC
-export default connect(mapStateToProps, mapDispatchToProps)(MessageTransport);
+export default connect(mapStateToProps)(MessageTransport);

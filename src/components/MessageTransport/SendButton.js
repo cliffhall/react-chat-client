@@ -12,7 +12,7 @@ class SendButton extends Component {
 
     // User wants to send the outgoing message
     handleClick = () => {
-        this.props.dispatch(sendMessage(this.props.socket, this.props.outgoingMessage));
+        this.props.sendMessage(this.props.outgoingMessage);
     };
 
     // Is the button enabled?
@@ -35,7 +35,7 @@ const mapStateToProps = (state) => ({
 
 // Map dispatch function into props
 const mapDispatchToProps = (dispatch) => ({
-    dispatch: dispatch
+    sendMessage: message => dispatch(sendMessage(message))
 });
 
 // Export props-mapped HOC

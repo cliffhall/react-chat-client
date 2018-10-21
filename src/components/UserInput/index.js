@@ -11,7 +11,7 @@ import { userChanged } from '../../store/message/actions';
 class UserInput extends Component {
 
     // A user has been selected
-    handleUserChange = event => this.props.dispatch(userChanged(event.target.value));
+    handleUserChange = event => this.props.userChanged(event.target.value);
 
     render() {
         return <div style={Styles.fieldStyle}>
@@ -29,7 +29,7 @@ const mapStateToProps = (state) => ({
 
 // Map dispatch function into props
 const mapDispatchToProps = (dispatch) => ({
-    dispatch: dispatch
+    userChanged: user => dispatch(userChanged(user))
 });
 
 // Export props-mapped HOC

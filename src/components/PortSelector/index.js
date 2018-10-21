@@ -11,7 +11,7 @@ import { portChanged } from '../../store/socket/actions';
 class PortSelector extends Component {
 
     // A port has been selected
-    handlePortChange = event => this.props.dispatch(portChanged(event.target.value));
+    handlePortChange = event => this.props.portChanged(event.target.value);
 
     render() {
         return <div style={Styles.fieldStyle}>
@@ -31,7 +31,7 @@ const mapStateToProps = (state) => ({
 
 // Map dispatch function into props
 const mapDispatchToProps = (dispatch) => ({
-    dispatch: dispatch
+    portChanged: port => dispatch(portChanged(port))
 });
 
 // Export props-mapped HOC

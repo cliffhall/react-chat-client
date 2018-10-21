@@ -1,10 +1,12 @@
-import { combineReducers } from 'redux';
-import { createStore } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
 
 // REDUCERS
 import socketReducer from './socket/reducer';
 import messageReducer from './message/reducer';
 import statusReducer from './status/reducer';
+
+// MIDDLEWARE
+import socketMiddleware from './socket/middleware';
 
 // Root reducer
 const rootReducer = combineReducers({
@@ -14,6 +16,8 @@ const rootReducer = combineReducers({
 });
 
 // Store
-const store = createStore(rootReducer);
+const store = createStore(
+    rootReducer,
+    applyMiddleware(socketMiddleware));
 
 export default store;

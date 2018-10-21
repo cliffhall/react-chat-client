@@ -11,16 +11,18 @@ import { recipientChanged } from '../../store/message/actions';
 class RecipientSelector extends Component {
 
     // A recipient has been selected
-    handleRecipientChange = event => this.props.dispatch(recipientChanged(event.target.value));
+    handleRecipientChange = event => this.props.recipientChanged(event.target.value);
 
     render() {
         return (this.props.users.length)
             ? <div style={Styles.fieldStyle}>
                 <label style={Styles.labelStyle} htmlFor="selectRecipient">Recipient</label>
-                <select name="selectRecipient" onChange={this.handleRecipientChange}>
-                    <option disabled value={UI.NO_RECIPIENT} selected={this.props.recipient === UI.NO_RECIPIENT} key="-1">{UI.NO_RECIPIENT}</option>
+                <select name="selectRecipient"
+                        value={this.props.recipient}
+                        onChange={this.handleRecipientChange}>
+                    <option disabled value={UI.NO_RECIPIENT} key="-1">{UI.NO_RECIPIENT}</option>
                     {this.props.users.map( (user, index) =>
-                        <option key={index} selected={this.props.recipient === user} value={user}>{user}</option>)}
+                        <option key={index} value={user}>{user}</option>)}
                 </select>
               </div>
             : null;
@@ -36,7 +38,7 @@ const mapStateToProps = (state) => ({
 
 // Map dispatch function into props
 const mapDispatchToProps = (dispatch) => ({
-    dispatch: dispatch
+    recipientChanged: recipient => dispatch(recipientChanged(recipient))
 });
 
 // Export props-mapped HOC
